@@ -1,6 +1,7 @@
 <?xml version="1.0" ?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
 	<xacro:macro name="load_robot" params="
+    robot_type
     vision
     robot_ip
     username
@@ -24,36 +25,79 @@
     initial_positions:=${dict(joint_1=0.0,joint_2=0.0,joint_3=0.0,joint_4=0.0,joint_5=0.0,joint_6=0.0)}
     gripper_com_port:=/dev/ttyUSB0">
 
-		<!-- Include arm macro files -->
-		<!-- <xacro:include filename="$(find mobile_manipulator)/urdf/arm_and_gripper.xacro" /> -->
-    <xacro:include filename="$(find mobile_manipulator)/urdf/base.xacro" />
-    <xacro:include filename="$(find mobile_manipulator)/urdf/integrated_model.xacro" />
+    <!-- if robot_type is base, load the base.xacro file -->
+    <xacro:if value="${robot_type == 'base'}">
+      <xacro:include filename="$(find mobile_manipulator)/urdf/${robot_type}.xacro" />
+      <xacro:load_base
+        parent="base_link">
+      </xacro:load_base>
+    </xacro:if>
 
-		<!-- Load the arm -->
-    <xacro:load_arm
-      parent="${connection_link}"
-      vision="${vision}"
-      robot_ip="${robot_ip}"
-      username="${username}"
-      password="${password}"
-      port="${port}"
-      port_realtime="${port_realtime}"
-      session_inactivity_timeout_ms="${session_inactivity_timeout_ms}"
-      connection_inactivity_timeout_ms="${connection_inactivity_timeout_ms}"
-      use_internal_bus_gripper_comm="${use_internal_bus_gripper_comm}"
-      use_fake_hardware="${use_fake_hardware}"
-      fake_sensor_commands="${fake_sensor_commands}"
-      sim_gazebo="${sim_gazebo}"
-      sim_ignition="${sim_ignition}"
-      sim_isaac="${sim_isaac}"
-      isaac_joint_commands="${isaac_joint_commands}"
-      isaac_joint_states="${isaac_joint_states}"
-      gripper_joint_name="${gripper_joint_name}"
-      gripper_max_velocity="${gripper_max_velocity}"
-      gripper_max_force="${gripper_max_force}"
-      use_external_cable="${use_external_cable}"
-      initial_positions="${initial_positions}"
-			gripper_com_port="${gripper_com_port}">
-    </xacro:load_arm>
+    <!-- if robot_type is arm, load the arm.xacro file -->
+    <xacro:if value="${robot_type == 'arm'}">
+      <xacro:include filename="$(find mobile_manipulator)/urdf/${robot_type}.xacro" />
+      <xacro:load_arm
+        parent="base_link"
+        vision="${vision}"
+        robot_ip="${robot_ip}"
+        username="${username}"
+        password="${password}"
+        port="${port}"
+        port_realtime="${port_realtime}"
+        session_inactivity_timeout_ms="${session_inactivity_timeout_ms}"
+        connection_inactivity_timeout_ms="${connection_inactivity_timeout_ms}"
+        use_internal_bus_gripper_comm="${use_internal_bus_gripper_comm}"
+        use_fake_hardware="${use_fake_hardware}"
+        fake_sensor_commands="${fake_sensor_commands}"
+        sim_gazebo="${sim_gazebo}"
+        sim_ignition="${sim_ignition}"
+        sim_isaac="${sim_isaac}"
+        isaac_joint_commands="${isaac_joint_commands}"
+        isaac_joint_states="${isaac_joint_states}"
+        gripper_joint_name="${gripper_joint_name}"
+        gripper_max_velocity="${gripper_max_velocity}"
+        gripper_max_force="${gripper_max_force}"
+        use_external_cable="${use_external_cable}"
+        initial_positions="${initial_positions}"
+        gripper_com_port="${gripper_com_port}">
+      </xacro:load_arm>
+    </xacro:if>
+
+    <!-- if robot_type is integrate, load the integrated model with base and arm -->
+    <xacro:if value="${robot_type == 'integrate'}">
+      <xacro:include filename="$(find mobile_manipulator)/urdf/base.xacro" />
+      <xacro:load_base
+        parent="base_link">
+      </xacro:load_base>
+      <xacro:include filename="$(find mobile_manipulator)/urdf/integrated_model.xacro" />
+      <xacro:load_arm
+        parent="${connection_link}"
+        vision="${vision}"
+        robot_ip="${robot_ip}"
+        username="${username}"
+        password="${password}"
+        port="${port}"
+        port_realtime="${port_realtime}"
+        session_inactivity_timeout_ms="${session_inactivity_timeout_ms}"
+        connection_inactivity_timeout_ms="${connection_inactivity_timeout_ms}"
+        use_internal_bus_gripper_comm="${use_internal_bus_gripper_comm}"
+        use_fake_hardware="${use_fake_hardware}"
+        fake_sensor_commands="${fake_sensor_commands}"
+        sim_gazebo="${sim_gazebo}"
+        sim_ignition="${sim_ignition}"
+        sim_isaac="${sim_isaac}"
+        isaac_joint_commands="${isaac_joint_commands}"
+        isaac_joint_states="${isaac_joint_states}"
+        gripper_joint_name="${gripper_joint_name}"
+        gripper_max_velocity="${gripper_max_velocity}"
+        gripper_max_force="${gripper_max_force}"
+        use_external_cable="${use_external_cable}"
+        initial_positions="${initial_positions}"
+        gripper_com_port="${gripper_com_port}">
+      </xacro:load_arm>
+    </xacro:if>
+
+		<!-- Include xacro files -->
+    
 	</xacro:macro>
 </robot>

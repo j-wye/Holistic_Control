@@ -3,7 +3,7 @@
     <xacro:arg name="name" default="mobile_manipulator"/>
 
     <!-- Arguments -->
-    <xacro:arg name="prefix" default="arm"/>
+    <xacro:arg name="robot_type" default=""/>
     <xacro:arg name="arm" default="gen3_lite"/>
     <xacro:arg name="dof" default="6"/>
     <xacro:arg name="gripper" default="gen3_lite_2f"/>
@@ -33,7 +33,9 @@
     <xacro:arg name="initial_positions_file" default="$(find mobile_manipulator)/config/initial_positions.yaml"/>
     <xacro:property name="initial_positions_file" default="$(arg initial_positions_file)"/>
     
+    <link name="base_link"/>
     <xacro:load_robot
+        robot_type="$(arg robot_type)"
         vision="$(arg vision)"
         robot_ip="$(arg robot_ip)"
         username="$(arg username)"

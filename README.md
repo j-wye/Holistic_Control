@@ -3,13 +3,23 @@
 ## Integrated Model
 - For some of the existing materials, the dimensions of the materials were different from my robot, so I designed my own
 
+
+#### How to install
 ```bash
-# Only view Manipulator
-ros2 launch mobile_manipulator arm_and_gripper.launch.py
+mkdir -p hc_ws/src
+cd hc_ws/src && git clone https://github.com/j-wye/Holistic_Control.git
+cd ../ && colcon build
+source install/setup.bash
+```
 
-# Only view Mobile base
-ros2 launch mobile_manipulator base.launch.py
 
-# Integrated version with Mobile Base and Manipulator
-ros2 launch mobile_manipulator view_robot.launch.py
+```bash
+# View only Manipulator
+ros2 launch mobile_manipulator view.launch.py robot_type:=arm
+
+# View only Mobile base
+ros2 launch mobile_manipulator view.launch.py robot_type:=base
+
+# View Integrate version with Mobile Base and Manipulator
+ros2 launch mobile_manipulator view.launch.py robot_type:=integrate
 ```
