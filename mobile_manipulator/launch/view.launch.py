@@ -3,12 +3,35 @@ from launch.actions import DeclareLaunchArgument
 from launch.substitutions import (
     Command,
     FindExecutable,
+    LaunchConfiguration,
     PathJoinSubstitution,
 )
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
+    declared_arguments = []
+    #robot type
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "robot_type",
+            description="Want to See which model?",
+            choices=["arm", "base", "integrate"],
+            default_value="integrate",
+        )
+    )
+    #robot ip
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "robot_ip",
+            description="Robot's IP address",
+            default_value="xxx.yyy.zzz.www",
+        )
+    )
+
+    robot_type = LaunchConfiguration("robot_type")
+    robot_ip = LaunchConfiguration("robot_ip")
+    
     robot_description_content = Command(
         [
             PathJoinSubstitution([FindExecutable(name="xacro")]),
@@ -16,7 +39,8 @@ def generate_launch_description():
             PathJoinSubstitution(
                 [FindPackageShare("mobile_manipulator"), "urdf", "execution.urdf.xacro"]
             )," ",
-            "robot_ip:=yyy.yyy.yyy.yyy", " ",
+            "robot_type:=", robot_type, " ",
+            "robot_ip:=", robot_ip, " ",
             "name:=mobile_manipulator", " ",
         ]
     )
@@ -36,7 +60,7 @@ def generate_launch_description():
     )
 
     rviz_config_file = PathJoinSubstitution(
-        [FindPackageShare("mobile_manipulator"), "rviz", "view_robot.rviz"]
+        [FindPackageShare("mobile_manipulator"), "rviz", "integrated_model.rviz"]
     )
     rviz = Node(
         package="rviz2",
@@ -52,4 +76,4 @@ def generate_launch_description():
         rviz,
     ]
 
-    return LaunchDescription(nodes_to_start)
+    return LaunchDescription(declared_arguments + nodes_to_start)

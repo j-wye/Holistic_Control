@@ -17,7 +17,7 @@ ros2 launch mobile_manipulator view.launch.py robot_type:=arm
 # View only Mobile base
 ros2 launch mobile_manipulator view.launch.py robot_type:=base
 
-# View Integrate version with Mobile Base and Manipulator
+# View Integrate version with Mobile Base and Manipulator (default is integrate)
 ros2 launch mobile_manipulator view.launch.py robot_type:=integrate
 ```
 
