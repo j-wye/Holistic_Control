@@ -24,3 +24,10 @@ ros2 launch mobile_manipulator view.launch.py robot_type:=integrate
 Following image is integrate version of mobile manipulator
 
 <img src="./mobile_manipulator/img/success_model.png" width=50% >
+
+Have to install before launch following as:
+```bash
+sudo apt install ros-${ROS_DISTRO}-gazebo-ros2-control*
+sudo apt install ros-${ROS_DISTRO}-topic-based-ros2-control*
+sudo apt install ros-${ROS_DISTRO}-picknik-*
+```
