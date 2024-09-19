@@ -25,6 +25,7 @@ Following image is integrate version of mobile manipulator
 
 <img src="./mobile_manipulator/img/success_model.png" width=50% >
 
+<<<<<<< HEAD
 Have to install before launch following as:
 ```bash
 sudo apt install ros-${ROS_DISTRO}-gazebo-ros2-control*
@@ -32,6 +33,8 @@ sudo apt install ros-${ROS_DISTRO}-topic-based-ros2-control*
 sudo apt install ros-${ROS_DISTRO}-picknik-*
 ```
 
+=======
+>>>>>>> 6df0cdaaa13cae1e881dd3c167be15c172d25ace
 Want to test integrate model move on a rviz following as:
 
 ```bash
