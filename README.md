@@ -25,18 +25,14 @@ Following image is integrate version of mobile manipulator
 
 <img src="./mobile_manipulator/img/success_model.png" width=50% >
 
-<<<<<<< HEAD
-Have to install before launch following as:
+install this first before launch following as:
 ```bash
 sudo apt install ros-${ROS_DISTRO}-gazebo-ros2-control*
 sudo apt install ros-${ROS_DISTRO}-topic-based-ros2-control*
 sudo apt install ros-${ROS_DISTRO}-picknik-*
 ```
 
-=======
->>>>>>> 6df0cdaaa13cae1e881dd3c167be15c172d25ace
-Want to test integrate model move on a rviz following as:
-
+Want to test integrate model move on a rviz following as
 ```bash
 ros2 topic pub -r 10 /joint_states sensor_msgs/msg/JointState "{name: ['fl_joint', 'fr_joint', 'rl_bracket_joint', 'rl_wheel_joint', 'rr_bracket_joint', 'rr_wheel_joint', 'arm_joint_1', 'arm_joint_2', 'arm_joint_3', 'arm_joint_4', 'arm_joint_5', 'arm_joint_6', 'right_finger_bottom_joint', 'right_finger_tip_joint', 'left_finger_bottom_joint', 'left_finger_tip_joint'], position: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 1.0, 2.0], velocity: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 1.0, 2.0], effort: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 1.0, 2.0]}"
 ```
