@@ -27,9 +27,11 @@ Following image is integrate version of mobile manipulator
 
 install this first before launch following as:
 ```bash
-sudo apt install ros-${ROS_DISTRO}-gazebo-ros2-control*
-sudo apt install ros-${ROS_DISTRO}-topic-based-ros2-control*
-sudo apt install ros-${ROS_DISTRO}-picknik-*
+sudo apt install -y ros-${ROS_DISTRO}-gazebo-ros2-control*
+sudo apt install -y ros-${ROS_DISTRO}-topic-based-ros2-control*
+sudo apt install -y ros-${ROS_DISTRO}-picknik-*
+sudo apt install -y ros-${ROS_DISTRO}-diff-drive-controller*
+sudo apt install -y ros-${ROS_DISTRO}-ros2-control*
 ```
 
 Want to test integrate model move on a rviz following as
