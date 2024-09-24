@@ -38,3 +38,9 @@ Want to test integrate model move on a rviz following as
 ```bash
 ros2 topic pub -r 10 /joint_states sensor_msgs/msg/JointState "{name: ['fl_joint', 'fr_joint', 'rl_bracket_joint', 'rl_wheel_joint', 'rr_bracket_joint', 'rr_wheel_joint', 'arm_joint_1', 'arm_joint_2', 'arm_joint_3', 'arm_joint_4', 'arm_joint_5', 'arm_joint_6', 'right_finger_bottom_joint', 'right_finger_tip_joint', 'left_finger_bottom_joint', 'left_finger_tip_joint'], position: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 1.0, 2.0], velocity: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 1.0, 2.0], effort: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 1.0, 2.0]}"
 ```
+
+```bash
+ros2 topic pub -r 10 /dynamic_joint_states control_msgs/msg/DynamicJointState "{joint_names: ['fl_joint', 'fr_joint', 'rl_bracket_joint', 'rl_wheel_joint', 'rr_bracket_joint', 'rr_wheel_joint', 'arm_joint_1', 'arm_joint_2', 'arm_joint_3', 'arm_joint_4', 'arm_joint_5', 'arm_joint_6', 'right_finger_bottom_joint', 'right_finger_tip_joint', 'left_finger_bottom_joint', 'left_finger_tip_joint'], \
+interface_values: \
+[{interface_names: 'position', values: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 1.0, 2.0]}, {interface_names: 'velocity', values: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 1.0, 2.0]}]}"
+```
