@@ -36,6 +36,7 @@ sudo apt install -y ros-${ROS_DISTRO}-ros2-control*
 
 Want to test integrate model move on a rviz following as:
 
+1. Move Manipulator Arm Joints with command:
 ```bash
 ros2 topic pub --once /joint_trajectory_controller/joint_trajectory trajectory_msgs/msg/JointTrajectory \
 "{\
@@ -44,5 +45,16 @@ ros2 topic pub --once /joint_trajectory_controller/joint_trajectory trajectory_m
     positions: [0.0, -1.0, 1.0, 0.5, 0.0, 0.0],\
     time_from_start: {sec: 5, nanosec: 0}\
   }]\
+}"
+```
+
+2. Move Gripper with command:
+```bash
+ros2 action send_goal /robotiq_gripper_controller/gripper_cmd control_msgs/action/GripperCommand \
+"{\
+  command: {\
+    position: 0.8,\
+    max_effort: 10.0\
+  }\
 }"
 ```
