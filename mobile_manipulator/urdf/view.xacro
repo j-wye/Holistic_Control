@@ -10,27 +10,34 @@
     port_realtime
     session_inactivity_timeout_ms
     connection_inactivity_timeout_ms
-    use_internal_bus_gripper_comm:=false
-    use_fake_hardware:=false
-    fake_sensor_commands:=false
-    sim_gazebo:=false
-    sim_ignition:=false
-    sim_isaac:=false
-    isaac_joint_commands:=/isaac_joint_commands
-    isaac_joint_states:=/isaac_joint_states
+    use_internal_bus_gripper_comm
+    use_fake_hardware
+    fake_sensor_commands
+    sim_gazebo
+    sim_ignition
+    sim_isaac
     gripper_joint_name
-    gripper_max_velocity:=100.0
-    gripper_max_force:=100.0
-    use_external_cable:=false
-    initial_positions:=${dict(joint_1=0.0,joint_2=0.0,joint_3=0.0,joint_4=0.0,joint_5=0.0,joint_6=0.0)}
+    gripper_max_velocity
+    gripper_max_force
     gripper_com_port:=/dev/ttyUSB0">
+
+    <xacro:arg name="base_isaac_joint_commands" default="/base_isaac_joint_commands"/>
+    <xacro:arg name="base_isaac_joint_states" default="/base_isaac_joint_states"/>
+    <xacro:arg name="arm_isaac_joint_commands" default="/arm_isaac_joint_commands"/>
+    <xacro:arg name="arm_isaac_joint_states" default="/arm_isaac_joint_states"/>
 
     <!-- if robot_type is base, load the base.xacro file -->
     <xacro:if value="${robot_type == 'base'}">
       <xacro:include filename="$(find mobile_manipulator)/urdf/${robot_type}.xacro" />
       <xacro:load_base
-        parent="base_link">
-      </xacro:load_base>
+        parent="base_link"
+        use_fake_hardware="${use_fake_hardware}"
+        fake_sensor_commands="${fake_sensor_commands}"
+        sim_gazebo="${sim_gazebo}"
+        sim_ignition="${sim_ignition}"
+        sim_isaac="${sim_isaac}"
+        isaac_joint_commands="$(arg base_isaac_joint_commands)"
+        isaac_joint_states="$(arg base_isaac_joint_states)"/>
     </xacro:if>
 
     <!-- if robot_type is arm, load the arm.xacro file -->
@@ -52,24 +59,27 @@
         sim_gazebo="${sim_gazebo}"
         sim_ignition="${sim_ignition}"
         sim_isaac="${sim_isaac}"
-        isaac_joint_commands="${isaac_joint_commands}"
-        isaac_joint_states="${isaac_joint_states}"
+        isaac_joint_commands="$(arg arm_isaac_joint_commands)"
+        isaac_joint_states="$(arg arm_isaac_joint_states)"
         gripper_joint_name="${gripper_joint_name}"
         gripper_max_velocity="${gripper_max_velocity}"
         gripper_max_force="${gripper_max_force}"
-        use_external_cable="${use_external_cable}"
-        initial_positions="${initial_positions}"
-        gripper_com_port="${gripper_com_port}">
-      </xacro:load_arm>
+        gripper_com_port="${gripper_com_port}"/>
     </xacro:if>
 
     <!-- if robot_type is integrate, load the integrated model with base and arm -->
     <xacro:if value="${robot_type == 'integrate'}">
       <xacro:include filename="$(find mobile_manipulator)/urdf/base.xacro" />
+      <xacro:include filename="$(find mobile_manipulator)/urdf/arm.xacro" />
       <xacro:load_base
-        parent="base_link">
-      </xacro:load_base>
-      <xacro:include filename="$(find mobile_manipulator)/urdf/integrated_model.xacro" />
+        parent="base_link"
+        use_fake_hardware="${use_fake_hardware}"
+        fake_sensor_commands="${fake_sensor_commands}"
+        sim_gazebo="${sim_gazebo}"
+        sim_ignition="${sim_ignition}"
+        sim_isaac="${sim_isaac}"
+        isaac_joint_commands="$(arg base_isaac_joint_commands)"
+        isaac_joint_states="$(arg base_isaac_joint_states)"/>
       <xacro:load_arm
         parent="${connection_link}"
         vision="${vision}"
@@ -86,18 +96,12 @@
         sim_gazebo="${sim_gazebo}"
         sim_ignition="${sim_ignition}"
         sim_isaac="${sim_isaac}"
-        isaac_joint_commands="${isaac_joint_commands}"
-        isaac_joint_states="${isaac_joint_states}"
+        isaac_joint_commands="$(arg arm_isaac_joint_commands)"
+        isaac_joint_states="$(arg arm_isaac_joint_states)"
         gripper_joint_name="${gripper_joint_name}"
         gripper_max_velocity="${gripper_max_velocity}"
         gripper_max_force="${gripper_max_force}"
-        use_external_cable="${use_external_cable}"
-        initial_positions="${initial_positions}"
-        gripper_com_port="${gripper_com_port}">
-      </xacro:load_arm>
+        gripper_com_port="${gripper_com_port}"/>
     </xacro:if>
-
-		<!-- Include xacro files -->
-    
 	</xacro:macro>
 </robot>

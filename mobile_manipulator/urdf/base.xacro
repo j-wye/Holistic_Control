@@ -1,32 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <robot name="tracer_mini" xmlns:xacro="http://www.ros.org/wiki/xacro">
   <xacro:property name="connection_link" value="base_arm_connector" />
+  <xacro:property name="M_PI" value="3.14159265358979323846" />
+  <xacro:property name="base_body_width" value="0.4" />
+  <xacro:property name="base_body_length" value="0.4" />
+  <xacro:property name="total_height" value="0.29386" />
+  <xacro:property name="front_wheel_length" value="0.127547" />
+  <xacro:property name="front_wheel_radius" value="0.0575" />
+  <xacro:property name="front_wheel_depth" value="0.079536242431022" />
+  <xacro:property name="rear_wheel_length" value="0.125" />
+  <xacro:property name="rear_wheel_radius" value="0.0325" />
+  <xacro:property name="rear_wheel_depth" value="0.022335230282742743" />
+
+  <!-- About the mass ratio of each part: -->
+  <xacro:property name="base_body_mass" value="24.3948952632956" />
+  <xacro:property name="front_wheel_mass" value="1.0568406891164" />
+  <xacro:property name="rear_wheel_bracket_mass" value="0.0211573699864" />
+  <xacro:property name="rear_wheel_mass" value="0.0920111896829" />
+  <xacro:property name="camera_mass" value="0.2333248928640" />
+  <xacro:property name="lidar_mass" value="0.1071556446529" />
+  <xacro:property name="base_arm_connector_mass" value="0.4535071053510" />
+
+  <xacro:include filename="$(find mobile_manipulator)/urdf/inertial.xacro" />
+
 	<xacro:macro name="load_base" params="
-    parent">
+    parent
+    use_fake_hardware
+    fake_sensor_commands
+    sim_gazebo
+    sim_ignition
+    sim_isaac
+    isaac_joint_commands:=/base_isaac_joint_commands
+    isaac_joint_states:=/base_isaac_joint_states">
 
-
-    <xacro:property name="M_PI" value="3.14159265358979323846" />
-    <xacro:property name="base_body_width" value="0.4" />
-    <xacro:property name="base_body_length" value="0.4" />
-    <xacro:property name="total_height" value="0.29386" />
-    <xacro:property name="front_wheel_length" value="0.127547" />
-    <xacro:property name="front_wheel_radius" value="0.0575" />
-    <xacro:property name="front_wheel_depth" value="0.079536242431022" />
-    <xacro:property name="rear_wheel_length" value="0.125" />
-    <xacro:property name="rear_wheel_radius" value="0.0325" />
-    <xacro:property name="rear_wheel_depth" value="0.022335230282742743" />
-
-    <!-- About the mass ratio of each part: -->
-    <xacro:property name="base_body_mass" value="24.3948952632956" />
-    <xacro:property name="front_wheel_mass" value="1.0568406891164" />
-    <xacro:property name="rear_wheel_bracket_mass" value="0.0211573699864" />
-    <xacro:property name="rear_wheel_mass" value="0.0920111896829" />
-    <xacro:property name="camera_mass" value="0.2333248928640" />
-    <xacro:property name="lidar_mass" value="0.1071556446529" />
-    <xacro:property name="base_arm_connector_mass" value="0.4535071053510" />
-
-    <!-- Include inertial xacro files -->
-    <xacro:include filename="$(find mobile_manipulator)/urdf/inertial.xacro" />
 
     <joint name="base_body_joint" type="fixed">
       <origin xyz="0 0 ${total_height}" rpy="0 0 0" />
@@ -60,6 +66,7 @@
       <parent link="base_body" />
       <child link="fl_wheel" />
       <axis xyz="0 0 1" />
+      <dynamics damping="0.1" friction="0.1" />
     </joint>
     <link name="fl_wheel">
       <visual>
@@ -88,6 +95,7 @@
       <parent link="base_body" />
       <child link="fr_wheel" />
       <axis xyz="0 0 1" />
+      <dynamics damping="0.1" friction="0.1" />
     </joint>
     <link name="fr_wheel">
       <visual>
@@ -115,6 +123,7 @@
       <parent link="base_body" />
       <child link="rl_bracket" />
       <axis xyz="0 0 1" />
+      <dynamics damping="0.1" friction="0.0" />
     </joint>
     <link name="rl_bracket">
       <visual>
@@ -143,6 +152,7 @@
       <parent link="rl_bracket" />
       <child link="rl_wheel" />
       <axis xyz="0 0 1" />
+      <dynamics damping="0.1" friction="0.0" />
     </joint>
     <link name="rl_wheel">
       <visual>
@@ -166,11 +176,12 @@
     </link>
 
 
-    <joint name="rr_bracekt_joint" type="continuous">
+    <joint name="rr_bracket_joint" type="continuous">
       <origin xyz="-0.17043 -${rear_wheel_length} ${rear_wheel_radius - total_height + 0.0453}" rpy="0 0 0" />
       <parent link="base_body" />
       <child link="rr_bracket" />
       <axis xyz="0 0 1" />
+      <dynamics damping="0.1" friction="0.0" />
     </joint>
     <link name="rr_bracket">
       <visual>
@@ -198,6 +209,7 @@
       <parent link="rr_bracket" />
       <child link="rr_wheel" />
       <axis xyz="0 0 1" />
+      <dynamics damping="0.1" friction="0.0" />
     </joint>
     <link name="rr_wheel">
       <visual>
