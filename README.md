@@ -36,25 +36,60 @@ sudo apt install -y ros-${ROS_DISTRO}-ros2-control*
 
 Want to test integrate model move on a rviz following as:
 
-1. Move Manipulator Arm Joints with command:
-```bash
-ros2 topic pub --once /joint_trajectory_controller/joint_trajectory trajectory_msgs/msg/JointTrajectory \
-"{\
-  joint_names: ['arm_joint_1', 'arm_joint_2', 'arm_joint_3', 'arm_joint_4', 'arm_joint_5', 'arm_joint_6'],\
-  points: [{\
-    positions: [0.0, -1.0, 1.0, 0.5, 0.0, 0.0],\
-    time_from_start: {sec: 5, nanosec: 0}\
-  }]\
-}"
-```
+1. Move Manipulator Arm Joints with command
 
+  - Use Joint Trajectory Controller (Means position control, not a velocity control)
+    - ros2 topic pub:
+      ```bash
+      ros2 topic pub --once --qos-reliability best_effort /joint_trajectory_controller/joint_trajectory trajectory_msgs/msg/JointTrajectory \
+      "{\
+        joint_names: ['arm_joint_1', 'arm_joint_2', 'arm_joint_3', 'arm_joint_4', 'arm_joint_5', 'arm_joint_6'],\
+        points: [{\
+          positions: [0.0, -1.0, 1.0, 0.5, 0.0, 0.0],\
+          time_from_start: {sec: 5, nanosec: 0}\
+        }]\
+      }"
+      ```
+    - ros2 action send_goal:
+      ```bash
+      ros2 action send_goal /joint_trajectory_controller/follow_joint_trajectory control_msgs/action/FollowJointTrajectory \
+      "{\
+        trajectory: {\
+          header: {\
+            stamp: {\
+              sec: 0,\
+              nanosec: 0\
+            },\
+            frame_id: ''\
+          },\
+          joint_names: ['arm_joint_1', 'arm_joint_2', 'arm_joint_3', 'arm_joint_4', 'arm_joint_5', 'arm_joint_6'],\
+          points: [\
+            {\
+              positions: [0.0, -1.0, 1.0, 0.5, 0.0, 0.0],\
+              velocities: [0.0, 0.5, 0.5, 0.5, 0.0, 0.0],\
+              time_from_start: {\
+                sec: 1.0,\
+                nanosec: 0.0\
+              }\
+            }\              
+          ]\
+        },\
+        path_tolerance: [],\
+        goal_tolerance: [],\
+        goal_time_tolerance: {\
+          sec: 1,\
+          nanosec: 0\
+        }\
+      }"
+      ```
 2. Move Gripper with command:
-```bash
-ros2 action send_goal /robotiq_gripper_controller/gripper_cmd control_msgs/action/GripperCommand \
-"{\
-  command: {\
-    position: 0.8,\
-    max_effort: 10.0\
-  }\
-}"
+  - ros2 action send_goal:
+    ```bash
+    ros2 action send_goal /robotiq_gripper_controller/gripper_cmd control_msgs/action/GripperCommand \
+    "{\
+      command: {\
+        position: 0.8,\
+        max_effort: 10.0\
+      }\
+    }"
 ```
