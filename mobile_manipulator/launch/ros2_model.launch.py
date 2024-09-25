@@ -47,7 +47,7 @@ def launch_setup(context, *args, **kwargs):
     robot_traj_controller = LaunchConfiguration('robot_traj_controller')
     robot_pos_controller = LaunchConfiguration('robot_pos_controller')
     robot_hand_controller = LaunchConfiguration('robot_hand_controller')
-    fault_controller = LaunchConfiguration('fault_controller')
+    # fault_controller = LaunchConfiguration('fault_controller')
 
     robot_description_content = Command(
         [
