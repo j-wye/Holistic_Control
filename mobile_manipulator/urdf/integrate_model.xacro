@@ -549,7 +549,6 @@
     <link name="end_effector_link"/>
 
 
-    <!-- 그냥 tcp joint를 사용하려면 tool_frame이라는 링크가 있어야 한다고 해서 추가함 -->
     <joint name="tool_frame_joint" type="fixed">
         <origin xyz="0 0 0.130" rpy="0 0 1.57079632679" />
         <parent link="end_effector_link" />
