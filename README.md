@@ -23,7 +23,8 @@ ros2 launch mobile_manipulator view.launch.py
 
 Following image is integrate version of mobile manipulator
 
-<img src="./mobile_manipulator/img/success_model.png" width=50% >
+<img src="./mobile_manipulator/img/success_model.png" width=50%>
+<img src="./mobile_manipulator/img/Screenshot from 2024-09-23 12-03-25.png" >
 
 install this first before launch following as:
 ```bash
