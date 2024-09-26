@@ -44,10 +44,6 @@ def launch_setup(context, *args, **kwargs):
     isaac_joint_states = LaunchConfiguration('isaac_joint_states')
     
     launch_rviz = LaunchConfiguration('launch_rviz')
-    robot_traj_controller = LaunchConfiguration('robot_traj_controller')
-    robot_pos_controller = LaunchConfiguration('robot_pos_controller')
-    robot_hand_controller = LaunchConfiguration('robot_hand_controller')
-    # fault_controller = LaunchConfiguration('fault_controller')
 
     robot_description_content = Command(
         [
@@ -129,31 +125,24 @@ def launch_setup(context, *args, **kwargs):
     joint_trajectory_controller_spawner = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=[robot_traj_controller, "-c", "/controller_manager"],
+        arguments=["joint_trajectory_controller", "-c", "/controller_manager"],
         # output="screen",
     )
 
     twist_controller_spawner = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=[robot_pos_controller, "--inactive", "-c", "/controller_manager"],
+        arguments=["twist_controller", "--inactive", "-c", "/controller_manager"],
         # output="screen",
     )
     
     robotiq_gripper_controller_spawner = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=[robot_hand_controller, "-c", "/controller_manager"],
+        arguments=["robotiq_gripper_controller", "-c", "/controller_manager"],
         # output="screen",
     )
     
-    # fault_controller_spawner = Node(
-    #     package="controller_manager",
-    #     executable="spawner",
-    #     arguments=[fault_controller, "-c", "/controller_manager"],
-    #     # output="screen",
-    # )
-
     diff_drive_controller_spawner = Node(
         package="controller_manager",
         executable="spawner",
@@ -169,7 +158,6 @@ def launch_setup(context, *args, **kwargs):
         joint_trajectory_controller_spawner,
         twist_controller_spawner,
         robotiq_gripper_controller_spawner,
-        # fault_controller_spawner,
         diff_drive_controller_spawner,
     ]
 
@@ -190,7 +178,7 @@ def generate_launch_description():
     declared_arguments.append(
         DeclareLaunchArgument(
             "description_file",
-            default_value="self_execution.xacro",
+            default_value="integrate_execution.xacro",
             description="Robot description file.",
         ),
     )
@@ -372,38 +360,6 @@ def generate_launch_description():
             "launch_rviz",
             default_value="true",
             description="Launch RViz?",
-        ),
-    )
-    # Robot Trajectory Controller
-    declared_arguments.append(
-        DeclareLaunchArgument(
-            "robot_traj_controller",
-            default_value="joint_trajectory_controller",
-            description="Robot Controller.",
-        ),
-    )
-    # Robot Pos Controller
-    declared_arguments.append(
-        DeclareLaunchArgument(
-            "robot_pos_controller",
-            default_value="twist_controller",
-            description="Robot Pos Controller.",
-        ),
-    )
-    # Robot Hand Controller
-    declared_arguments.append(
-        DeclareLaunchArgument(
-            "robot_hand_controller",
-            default_value="robotiq_gripper_controller",
-            description="Robot Hand Controller.",
-        ),
-    )
-    # Fault Controller
-    declared_arguments.append(
-        DeclareLaunchArgument(
-            "fault_controller",
-            default_value="fault_controller",
-            description="Fault Controller.",
         ),
     )
     return LaunchDescription(declared_arguments + [OpaqueFunction(function=launch_setup)])

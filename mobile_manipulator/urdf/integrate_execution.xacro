@@ -19,8 +19,8 @@
 	<xacro:arg name="gripper_max_force" default="100.0"/>
 	<xacro:arg name="gazebo_renderer" default="ogre"/>
 	<xacro:arg name="gripper_com_port" default="/dev/ttyUSB0"/>
-	<xacro:arg name="issac_joint_commands" default="/isaac_joint_commands"/>
-	<xacro:arg name="issac_joint_states" default="/isaac_joint_states"/>
+	<xacro:arg name="isaac_joint_commands" default="/isaac_joint_commands"/>
+	<xacro:arg name="isaac_joint_states" default="/isaac_joint_states"/>
 	<xacro:arg name="simulation_controllers" default="$(find mobile_manipulator)/config/ros2_control.yaml"/>
 	<xacro:arg name="initial_value" default="$(find mobile_manipulator)/config/initial_value.yaml"/>
 	<xacro:property name="initial_value" default="$(arg initial_value)"/>
@@ -45,8 +45,8 @@
 		gripper_joint_name="$(arg gripper_joint_name)"
 		gripper_max_velocity="$(arg gripper_max_velocity)"
 		gripper_max_force="$(arg gripper_max_force)"
-		isaac_joint_commands="$(arg issac_joint_commands)"
-		isaac_joint_states="$(arg issac_joint_states)"
+		isaac_joint_commands="$(arg isaac_joint_commands)"
+		isaac_joint_states="$(arg isaac_joint_states)"
 		initial_value="${xacro.load_yaml(initial_value)}"/>
 
 	<xacro:if value="$(arg sim_gazebo)">

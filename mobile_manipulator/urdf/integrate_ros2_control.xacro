@@ -26,7 +26,7 @@
           <param name="state_following_offset">0.0</param>
         </xacro:if>
       </hardware>
-      
+
 
       <joint name="fl_joint">
         <command_interface name="velocity"/>
