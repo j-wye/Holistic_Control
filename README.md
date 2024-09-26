@@ -71,7 +71,7 @@ Want to test integrate model move on a rviz following as:
                 sec: 1.0,\
                 nanosec: 0.0\
               }\
-            }\              
+            }\
           ]\
         },\
         path_tolerance: [],\
