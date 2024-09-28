@@ -44,10 +44,10 @@ Want to test integrate model move on a rviz following as:
       ```bash
       ros2 topic pub --once --qos-reliability best_effort /joint_trajectory_controller/joint_trajectory trajectory_msgs/msg/JointTrajectory \
       "{\
-        joint_names: ['arm_joint_1', 'arm_joint_2', 'arm_joint_3', 'arm_joint_4', 'arm_joint_5', 'arm_joint_6'],\
-        points: [{\
-          positions: [0.0, -1.0, 1.0, 0.5, 0.0, 0.0],\
-          time_from_start: {sec: 5, nanosec: 0}\
+      joint_names: ['arm_joint_1', 'arm_joint_2', 'arm_joint_3', 'arm_joint_4', 'arm_joint_5', 'arm_joint_6', 'right_finger_bottom_joint'],\
+      points: [{\
+        positions: [0.0, -1.0, 1.0, 0.5, 0.0, 0.0, 0.8],\
+        time_from_start: {sec: 5, nanosec: 0}\
         }]\
       }"
       ```
