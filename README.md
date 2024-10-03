@@ -26,14 +26,14 @@ Following image is integrate version of mobile manipulator
 <img src="./mobile_manipulator/img/success_model.png" width=50%>
 <img src="./mobile_manipulator/img/urdf_structure.png" >
 
-install this first before launch following as:
+<!-- install this first before launch following as:
 ```bash
 sudo apt install -y ros-${ROS_DISTRO}-gazebo-ros2-control*
 sudo apt install -y ros-${ROS_DISTRO}-topic-based-ros2-control*
 sudo apt install -y ros-${ROS_DISTRO}-picknik-*
 sudo apt install -y ros-${ROS_DISTRO}-diff-drive-controller*
 sudo apt install -y ros-${ROS_DISTRO}-ros2-control*
-```
+``` -->
 
 Want to test integrate model move on a rviz following as:
 
