@@ -11,8 +11,10 @@ sudo apt install ros-$ROS_DISTRO-kinematics-interface-kdl
 
 #### How to Use
 ```bash
-mkdir -p hc_ws/src && cd hc_ws/src
-git clone https://github.com/j-wye/Holistic_Control.git
+mkdir -p hc_ws/src && cd hc_ws
+git clone https://github.com/j-wye/Holistic_Control.git src/Holistic_Control
+mv Holistic_Control/* . && rm -rf Holistic_Control
+vcs import src/controller_packages --input src/ros2_kortex/ros2_kortex.$ROS_DISTRO.repos
 cd ../ && colcon build
 source install/setup.bash
 
