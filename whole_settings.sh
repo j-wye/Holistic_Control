@@ -1,11 +1,6 @@
-mkdir -p hc_ws/src
-cd hc_ws
-git clone https://github.com/j-wye/Holistic_Control.git src/Holistic_Control
-mv src/Holistic_Control/* src/
-rm -rf src/Holistic_Control*
-vcs import src/controller_packages --input src/mobile_manipulator/settings.humble.repos
-pip install setuptools==58.0.4
+pip install setuptools==58.2.0
 sudo apt install ros-$ROS_DISTRO-kinematics-interface-kdl
+vcs import src/controller_packages --input src/mobile_manipulator/settings.humble.repos
 
 # For optimization build with all cores
 NUM_THREADS=$(lscpu | grep '^CPU(s):' | awk '{print $2}')

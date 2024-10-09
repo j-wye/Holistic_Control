@@ -5,13 +5,14 @@
 
 #### How to Use
 ```bash
-# mkdir -p hc_ws/src && cd hc_ws
-# git clone https://github.com/j-wye/Holistic_Control.git src/Holistic_Control
-# mv src/Holistic_Control/* src/ && rm -rf src/Holistic_Control*
+mkdir -p hc_ws/src && cd hc_ws
+git clone https://github.com/j-wye/Holistic_Control.git src/Holistic_Control
+mv src/Holistic_Control/* src/ && rm -rf src/Holistic_Control*
 # vcs import src/controller_packages --input src/mobile_manipulator/settings.humble.repos
-# colcon build 
+# colcon build
 # source install/setup.bash
-wget https://raw.githubusercontent.com/j-wye/Holistic_Control/main/whole_settings.sh
+# wget https://raw.githubusercontent.com/j-wye/Holistic_Control/main/whole_settings.sh
+
 # View only Manipulator
 ros2 launch mobile_manipulator view.launch.py robot_type:=arm
 
