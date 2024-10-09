@@ -11,7 +11,7 @@
 # vcs import src/controller_packages --input src/mobile_manipulator/settings.humble.repos
 # colcon build 
 # source install/setup.bash
-
+wget https://raw.githubusercontent.com/j-wye/Holistic_Control/main/whole_settings.sh
 # View only Manipulator
 ros2 launch mobile_manipulator view.launch.py robot_type:=arm
 
