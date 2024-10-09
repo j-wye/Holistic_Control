@@ -3,20 +3,14 @@
 ## Integrated Model
 - For some of the existing materials, the dimensions of the materials were different from my robot, so I designed my own
 
-#### Environment settings
-```bash
-pip install setuptools==58.0.4
-sudo apt install ros-$ROS_DISTRO-kinematics-interface-kdl
-```
-
 #### How to Use
 ```bash
-mkdir -p hc_ws/src && cd hc_ws
-git clone https://github.com/j-wye/Holistic_Control.git src/Holistic_Control
-mv Holistic_Control/* . && rm -rf Holistic_Control
-vcs import src/controller_packages --input src/ros2_kortex/ros2_kortex.$ROS_DISTRO.repos
-cd ../ && colcon build
-source install/setup.bash
+# mkdir -p hc_ws/src && cd hc_ws
+# git clone https://github.com/j-wye/Holistic_Control.git src/Holistic_Control
+# mv src/Holistic_Control/* src/ && rm -rf src/Holistic_Control*
+# vcs import src/controller_packages --input src/mobile_manipulator/settings.humble.repos
+# colcon build 
+# source install/setup.bash
 
 # View only Manipulator
 ros2 launch mobile_manipulator view.launch.py robot_type:=arm
