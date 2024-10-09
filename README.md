@@ -6,8 +6,9 @@
 
 #### How to Use
 ```bash
-mkdir -p hc_ws/src
-cd hc_ws/src && git clone https://github.com/j-wye/Holistic_Control.git
+mkdir -p hc_ws/src && cd hc_ws/src
+git clone https://github.com/j-wye/Holistic_Control.git
+sudo apt install ros-$ROS_DISTRO-kinematics-interface-kdl
 cd ../ && colcon build
 source install/setup.bash
 
