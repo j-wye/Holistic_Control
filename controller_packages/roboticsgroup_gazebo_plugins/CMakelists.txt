@@ -1,0 +1,39 @@
+cmake_minimum_required(VERSION 3.5)
+project(roboticsgroup_gazebo_plugins)
+
+# ROS2 패키지와 의존성 패키지 찾기
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(gazebo_ros REQUIRED)
+find_package(control_toolbox REQUIRED)
+
+# 빌드 설정
+include_directories(include)
+
+# mimic_joint_plugin 라이브러리 정의 및 의존성 추가
+add_library(roboticsgroup_gazebo_mimic_joint_plugin SHARED src/mimic_joint_plugin.cpp)
+ament_target_dependencies(roboticsgroup_gazebo_mimic_joint_plugin
+  rclcpp
+  gazebo_ros
+  control_toolbox
+)
+
+# disable_link_plugin 라이브러리 정의 및 의존성 추가
+add_library(roboticsgroup_gazebo_disable_link_plugin SHARED src/disable_link_plugin.cpp)
+ament_target_dependencies(roboticsgroup_gazebo_disable_link_plugin
+  rclcpp
+  gazebo_ros
+)
+
+# 타겟에 필요한 라이브러리 링크
+target_link_libraries(roboticsgroup_gazebo_mimic_joint_plugin ${GAZEBO_LIBRARIES})
+target_link_libraries(roboticsgroup_gazebo_disable_link_plugin ${GAZEBO_LIBRARIES})
+
+# 설치 대상 지정
+install(TARGETS roboticsgroup_gazebo_mimic_joint_plugin roboticsgroup_gazebo_disable_link_plugin
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+)
+
+ament_package()
