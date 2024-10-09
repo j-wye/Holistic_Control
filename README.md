@@ -3,12 +3,16 @@
 ## Integrated Model
 - For some of the existing materials, the dimensions of the materials were different from my robot, so I designed my own
 
+#### Environment settings
+```bash
+pip install setuptools==58.0.4
+sudo apt install ros-$ROS_DISTRO-kinematics-interface-kdl
+```
 
 #### How to Use
 ```bash
 mkdir -p hc_ws/src && cd hc_ws/src
 git clone https://github.com/j-wye/Holistic_Control.git
-sudo apt install ros-$ROS_DISTRO-kinematics-interface-kdl
 cd ../ && colcon build
 source install/setup.bash
 
