@@ -1,23 +1,17 @@
 controller_manager:
   ros__parameters:
-    update_rate: 1000  # Hz
+    update_rate: 100  # Hz
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
-    joint_trajectory_controller:
+    joint_traj_cont:
       type: joint_trajectory_controller/JointTrajectoryController
-    
-    twist_controller:
-      type: picknik_twist_controller/PicknikTwistController
 
-    robotiq_gripper_controller:
-      type: position_controllers/GripperActionController
-    
-    diff_drive_controller:
+    diff_drive_cont:
       type: diff_drive_controller/DiffDriveController
 
-joint_trajectory_controller:
+joint_traj_cont:
   ros__parameters:
     joints:
       - arm_joint_1
@@ -26,6 +20,7 @@ joint_trajectory_controller:
       - arm_joint_4
       - arm_joint_5
       - arm_joint_6
+      - right_finger_bottom_joint
     command_interfaces:
       - position
     state_interfaces:
@@ -35,38 +30,43 @@ joint_trajectory_controller:
     action_monitor_rate: 20.0
     allow_partial_joints_goal: false
     constraints:
-      stopped_velocity_tolerance: 0.0
-      goal_time: 0.0
-  
-twist_controller:
-  ros__parameters:
-    joint: tcp
-    interface_names:
-      - twist.linear.x
-      - twist.linear.y
-      - twist.linear.z
-      - twist.angular.x
-      - twist.angular.y
-      - twist.angular.z
+      goal_time: 1.0
+      stopped_velocity_tolerance: 0.01
+      trajectory:
+        arm_joint_1:
+          max_velocity: 0.5
+          max_acceleration: 1.0
+        arm_joint_2:
+          max_velocity: 0.5
+          max_acceleration: 0.5
+        arm_joint_3:
+          max_velocity: 0.5
+          max_acceleration: 0.4
+        arm_joint_4:
+          max_velocity: 0.5
+          max_acceleration: 1.0
+        arm_joint_5:
+          max_velocity: 0.5
+          max_acceleration: 10.0
+        arm_joint_6:
+          max_velocity: 0.5
+          max_acceleration: 10.0
+    interpolator:
+      type: cubic
 
-robotiq_gripper_controller:
+diff_drive_cont:
   ros__parameters:
-    default: true
-    joint: right_finger_bottom_joint
-    allow_stalling: true
-    min_position: -0.09
-    max_position: 0.96
-
-diff_drive_controller:
-  ros__parameters:
-    left_wheel_names: ["fl_joint"]
-    right_wheel_names: ["fr_joint"]
-    publish_limited_velocity: true
+    publish_rate: 100.0
+    base_frame_id: base_link
+    left_wheel_names: ['fl_joint']
+    right_wheel_names: ['fr_joint']
     wheel_separation: 0.255094
     wheel_radius: 0.0575
-    cmd_vel_timeout: 0.25
     use_stamped_vel: false
-    base_frame_id: base_link
+
+
+    publish_limited_velocity: true
+    cmd_vel_timeout: 0.25 # RL 알고리즘 주기에 맞게 조정
     odom_frame_id: odom
     linear:
       x:

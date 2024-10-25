@@ -1,21 +1,21 @@
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, OpaqueFunction, ExecuteProcess, RegisterEventHandler
-from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.actions import DeclareLaunchArgument, OpaqueFunction, ExecuteProcess, RegisterEventHandler, IncludeLaunchDescription
 from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
-from launch_ros.actions import Node, SetParameter
-from launch_ros.parameter_descriptions import ParameterValue
-from launch.conditions import IfCondition
+from launch_ros.actions import Node
 from launch.event_handlers import OnProcessExit
+from launch.conditions import IfCondition
+from launch_ros.parameter_descriptions import ParameterValue
+from rclpy.qos import QoSProfile, DurabilityPolicy
+
 def launch_setup(context, *args, **kwargs):
     description_package = LaunchConfiguration('description_package')
     description_file = LaunchConfiguration('description_file')
     controllers_file = LaunchConfiguration('controllers_file')
-    urdf_file = LaunchConfiguration('urdf_file')
+    # initial_value_file = LaunchConfiguration('initial_value_file')
+    launch_rviz = LaunchConfiguration('launch_rviz')
+    use_sim_time = LaunchConfiguration('use_sim_time')
     
-    sim_gazebo = LaunchConfiguration('sim_gazebo')
-    sim_ignition = LaunchConfiguration('sim_ignition')
-    sim_isaac = LaunchConfiguration('sim_isaac')
     robot_ip = LaunchConfiguration('robot_ip')
     username = LaunchConfiguration('username')
     password = LaunchConfiguration('password')
@@ -26,6 +26,9 @@ def launch_setup(context, *args, **kwargs):
     use_internal_bus_gripper_comm = LaunchConfiguration('use_internal_bus_gripper_comm')
     use_fake_hardware = LaunchConfiguration('use_fake_hardware')
     fake_sensor_commands = LaunchConfiguration('fake_sensor_commands')
+    sim_gazebo = LaunchConfiguration('sim_gazebo')
+    sim_ignition = LaunchConfiguration('sim_ignition')
+    sim_isaac = LaunchConfiguration('sim_isaac')
     gripper_joint_name = LaunchConfiguration('gripper_joint_name')
     gripper_max_velocity = LaunchConfiguration('gripper_max_velocity')
     gripper_max_force = LaunchConfiguration('gripper_max_force')
@@ -33,76 +36,122 @@ def launch_setup(context, *args, **kwargs):
     gripper_com_port = LaunchConfiguration('gripper_com_port')
     isaac_joint_commands = LaunchConfiguration('isaac_joint_commands')
     isaac_joint_states = LaunchConfiguration('isaac_joint_states')
-    use_sim_time = LaunchConfiguration('use_sim_time')
-    launch_rviz = LaunchConfiguration('launch_rviz')
     
-    robot_controllers = PathJoinSubstitution(
+    robot_description_content = Command(
         [
-            FindPackageShare(description_package), 
-            "config", 
-            controllers_file
+            PathJoinSubstitution([FindExecutable(name="xacro")]), " ",
+            PathJoinSubstitution(
+                [FindPackageShare(description_package), "urdf", description_file]
+            ), " ",
+            "robot_ip:=", robot_ip, " ",
+            "username:=", username, " ",
+            "password:=", password, " ",
+            "port:=", port, " ",
+            "port_realtime:=", port_realtime, " ",
+            "session_inactivity_timeout_ms:=", session_inactivity_timeout_ms, " ",
+            "connection_inactivity_timeout_ms:=", connection_inactivity_timeout_ms, " ",
+            "use_internal_bus_gripper_comm:=", use_internal_bus_gripper_comm, " ",
+            "use_fake_hardware:=", use_fake_hardware, " ",
+            "fake_sensor_commands:=", fake_sensor_commands, " ",
+            "sim_gazebo:=", sim_gazebo, " ",
+            "sim_ignition:=", sim_ignition, " ",
+            "sim_isaac:=", sim_isaac, " ",
+            "gripper_joint_name:=", gripper_joint_name, " ",
+            "gripper_max_velocity:=", gripper_max_velocity, " ",
+            "gripper_max_force:=", gripper_max_force, " ",
+            "gazebo_renderer:=", gazebo_renderer, " ",
+            "gripper_com_port:=", gripper_com_port, " ",
+            "simulation_controllers:=", controllers_file, " ",
+            "isaac_joint_commands:=", isaac_joint_commands, " ",
+            "isaac_joint_states:=", isaac_joint_states, " ",
+            # "initial_value:=", initial_value_file, " ",
         ]
     )
-    
-    # robot_description_content = Command(
-    #     [
-    #         PathJoinSubstitution([FindExecutable(name='xacro')]),
-    #         " ",
-    #         PathJoinSubstitution(
-    #             [FindPackageShare(description_package), "urdf", description_file]),
-    #         " ",
-    #         "robot_ip:=", robot_ip, " ",
-    #         "username:=", username, " ",
-    #         "password:=", password, " ",
-    #         "port:=", port, " ",
-    #         "port_realtime:=", port_realtime, " ",
-    #         "session_inactivity_timeout_ms:=", session_inactivity_timeout_ms, " ",
-    #         "connection_inactivity_timeout_ms:=", connection_inactivity_timeout_ms, " ",
-    #         "use_internal_bus_gripper_comm:=", use_internal_bus_gripper_comm, " ",
-    #         "use_fake_hardware:=", use_fake_hardware, " ",
-    #         "fake_sensor_commands:=", fake_sensor_commands, " ",
-    #         "sim_gazebo:=", sim_gazebo, " ",
-    #         "sim_ignition:=", sim_ignition, " ",
-    #         "sim_isaac:=", sim_isaac, " ",
-    #         "gripper_joint_name:=", gripper_joint_name, " ",
-    #         "gripper_max_velocity:=", gripper_max_velocity, " ",
-    #         "gripper_max_force:=", gripper_max_force, " ",
-    #         "gazebo_renderer:=", gazebo_renderer, " ",
-    #         "gripper_com_port:=", gripper_com_port, " ",
-    #         "simulation_controllers:=", robot_controllers, " ",
-    #         "isaac_joint_commands:=", isaac_joint_commands, " ",
-    #         "isaac_joint_states:=", isaac_joint_states,
-    # ])
-    # URDF 파일 직접 로드
-    urdf_file_path = PathJoinSubstitution(
-        [FindPackageShare(description_package), "urdf", urdf_file]
-    )
-    
-    with open(urdf_file_path.perform(context), 'r') as infp:
-        robot_description_content = infp.read()
-        
     robot_description = {'robot_description': ParameterValue(robot_description_content, value_type=str)}
+
+    # World file path
+    world_file_path = PathJoinSubstitution(
+        [FindPackageShare("mobile_manipulator"), "worlds", "td3.world"]
+    )
     
     robot_state_publisher_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        output='both',
+        output='screen',
+        parameters=[robot_description, {"use_sim_time": use_sim_time}],
+    )
+
+    # Controller Manager Node
+    controller_manager_node = Node(
+        package='controller_manager',
+        executable='ros2_control_node',
+        name='controller_manager',
         parameters=[
-            robot_description,
+            # robot_description,
+            PathJoinSubstitution([FindPackageShare(description_package), "config", controllers_file]),
             {"use_sim_time": use_sim_time},
-        ]
+        ],
+        output='screen',
+    )
+
+    gzserver = ExecuteProcess(
+        cmd=['gzserver', '--verbose', '-s', 'libgazebo_ros_init.so', '-s', 'libgazebo_ros_factory.so', world_file_path],
+        output='screen',
+    )
+
+    gzclient = ExecuteProcess(
+        cmd=['gzclient'],
+        output='screen',
     )
     
+    spawn_robot = Node(
+        package='gazebo_ros',
+        executable='spawn_entity.py',
+        arguments=[
+            '-entity', 'mobile_manipulator',
+            '-topic', 'robot_description',
+            '-x', '0',
+            '-y', '0',
+            '-z', '0',
+            '-R', '0',
+            '-P', '0',
+            '-Y', '0',
+            '-unpause'],
+        output='screen',
+    )
+
     joint_state_broadcaster_spawner = Node(
         package='controller_manager',
         executable='spawner',
-        arguments=['joint_state_broadcaster'],
+        arguments=['joint_state_broadcaster', '--controller-manager', '/controller_manager'],
+        output='screen',
     )
-    
+
+    joint_trajectory_controller_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=['joint_traj_cont', '--controller-manager', '/controller_manager'],
+        output='screen',
+    )
+
+    diff_drive_controller_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=['diff_drive_cont', '--controller-manager', '/controller_manager'],
+        output='screen',
+    )
+
+    spawn_controllers_handler = RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=spawn_robot,
+            on_exit=[joint_state_broadcaster_spawner, joint_trajectory_controller_spawner, diff_drive_controller_spawner],
+        ) 
+    )
+
     rviz_config_file = PathJoinSubstitution(
         [FindPackageShare(description_package), "rviz", "view.rviz"]
     )
-    
+
     rviz_node = Node(
         package='rviz2',
         executable='rviz2',
@@ -119,55 +168,15 @@ def launch_setup(context, *args, **kwargs):
         ),
     )
 
-    joint_trajectory_controller_spawner = Node(
-        package='controller_manager',
-        executable='spawner',
-        arguments=['joint_trajectory_controller'],
-    )
-
-    twist_controller_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["twist_controller", "--inactive", "-c", "/controller_manager"],
-    )
-
-    diff_drive_controller_spawner = Node(
-        package='controller_manager',
-        executable='spawner',
-        arguments=['diff_drive_controller'],
-    )
-    
-    gzserver = ExecuteProcess(
-        cmd=["gzserver", "--verbose", "-s", "libgazebo_ros_init.so", "-s", "libgazebo_ros_factory.so"],
-        output="screen",
-    )
-
-    gzclient = ExecuteProcess(
-        cmd=["gzclient"],
-        output="screen",
-    )
-    
-    gazebo_spawn_robot = Node(
-        package="gazebo_ros",
-        executable="spawn_entity.py",
-        name="spawn_robot",
-        arguments=["-entity", "mobile_manipulator", "-topic", "robot_description"],
-        output="screen",
-    )
-
-    nodes_to_start = [
+    return [
         robot_state_publisher_node,
-        joint_state_broadcaster_spawner,
-        delay_rviz_after_joint_state_broadcaster_spawner,
-        joint_trajectory_controller_spawner,
-        twist_controller_spawner,
-        diff_drive_controller_spawner,
+        controller_manager_node,
         gzserver,
         gzclient,
-        gazebo_spawn_robot,
+        spawn_robot,
+        spawn_controllers_handler,
+        delay_rviz_after_joint_state_broadcaster_spawner,
     ]
-    
-    return nodes_to_start
 
 def generate_launch_description():
     declared_arguments = []
@@ -195,8 +204,30 @@ def generate_launch_description():
             description="Controllers configuration file.",
         ),
     )
-    
-    
+    # Initial value file name
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "initial_value_file_name",
+            default_value="initial_value.yaml",
+            description="Initial Value",
+        ),
+    )
+    # Launch RViz
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "launch_rviz",
+            default_value="true",
+            description="Launch RViz?",
+        ),
+    )
+    # Use sim time
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "use_sim_time",
+            default_value="true",
+            description="Use simulation time if true",
+        ),
+    )
     # Robot Ip
     declared_arguments.append(
         DeclareLaunchArgument(
@@ -265,7 +296,7 @@ def generate_launch_description():
     declared_arguments.append(
         DeclareLaunchArgument(
             "use_fake_hardware",
-            default_value="false",
+            default_value="true",
             description="Use fake hardware for simulation.",
         ),
     )
@@ -355,30 +386,6 @@ def generate_launch_description():
             "isaac_joint_states",
             default_value="/isaac_joint_states",
             description="Use joint states from Isaac.",
-        ),
-    )
-    # Launch RViz
-    declared_arguments.append(
-        DeclareLaunchArgument(
-            "launch_rviz",
-            default_value="true",
-            description="Launch RViz?",
-        ),
-    )
-    # Use simulation time
-    declared_arguments.append(
-        DeclareLaunchArgument(
-            "use_sim_time",
-            default_value="true",
-            description="Use simulation time.",
-        ),
-    )
-    # URDF File
-    declared_arguments.append(
-        DeclareLaunchArgument(
-            "urdf_file",
-            default_value="gazebo_robot.urdf",
-            description="URDF file.",
         ),
     )
     return LaunchDescription(declared_arguments + [OpaqueFunction(function=launch_setup)])
