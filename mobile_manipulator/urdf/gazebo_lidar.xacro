@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<xacro:macro name="gazebo_lidar" params="
+		parent
+		M_PI">
+
+		<gazebo reference="${parent}">
+			<material>Gazebo/Black</material>
+			<sensor name="RPLIDAR_A2M8" type="gpu_ray">
+				<pose>0 0 0 0 0 0</pose>
+				<visualize>true</visualize>
+				<update_rate>10</update_rate>
+				<ray>
+					<scan>
+						<horizontal>
+							<samples>800</samples>
+							<min_angle>${-M_PI}</min_angle>
+							<max_angle>${M_PI}</max_angle>
+						</horizontal>
+					</scan>
+					<range>
+						<min>0.15</min>
+						<max>12.0</max>
+					</range>
+				</ray>
+				<plugin name="gazebo_ros_lidar" filename="libgazebo_ros_ray_sensor.so">
+					<output_type>sensor_msgs/LaserScan</output_type>
+					<frame_name>${parent}</frame_name>
+				</plugin>
+			</sensor>
+		</gazebo>
+	</xacro:macro>
+</robot>

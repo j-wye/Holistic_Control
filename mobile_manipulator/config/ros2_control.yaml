@@ -5,13 +5,13 @@ controller_manager:
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
-    joint_traj_cont:
+    arm_controller:
       type: joint_trajectory_controller/JointTrajectoryController
 
-    diff_drive_cont:
+    base_controller:
       type: diff_drive_controller/DiffDriveController
 
-joint_traj_cont:
+arm_controller:
   ros__parameters:
     joints:
       - arm_joint_1
@@ -54,7 +54,7 @@ joint_traj_cont:
     interpolator:
       type: cubic
 
-diff_drive_cont:
+base_controller:
   ros__parameters:
     publish_rate: 100.0
     base_frame_id: base_link

@@ -1,18 +1,16 @@
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, OpaqueFunction, ExecuteProcess, RegisterEventHandler, IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, OpaqueFunction, ExecuteProcess, RegisterEventHandler, LogInfo
 from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import Node
 from launch.event_handlers import OnProcessExit
 from launch.conditions import IfCondition
 from launch_ros.parameter_descriptions import ParameterValue
-from rclpy.qos import QoSProfile, DurabilityPolicy
 
 def launch_setup(context, *args, **kwargs):
     description_package = LaunchConfiguration('description_package')
     description_file = LaunchConfiguration('description_file')
     controllers_file = LaunchConfiguration('controllers_file')
-    # initial_value_file = LaunchConfiguration('initial_value_file')
     launch_rviz = LaunchConfiguration('launch_rviz')
     use_sim_time = LaunchConfiguration('use_sim_time')
     
@@ -64,7 +62,6 @@ def launch_setup(context, *args, **kwargs):
             "simulation_controllers:=", controllers_file, " ",
             "isaac_joint_commands:=", isaac_joint_commands, " ",
             "isaac_joint_states:=", isaac_joint_states, " ",
-            # "initial_value:=", initial_value_file, " ",
         ]
     )
     robot_description = {'robot_description': ParameterValue(robot_description_content, value_type=str)}
@@ -80,14 +77,13 @@ def launch_setup(context, *args, **kwargs):
         output='screen',
         parameters=[robot_description, {"use_sim_time": use_sim_time}],
     )
-
+    
     # Controller Manager Node
     controller_manager_node = Node(
         package='controller_manager',
         executable='ros2_control_node',
         name='controller_manager',
         parameters=[
-            # robot_description,
             PathJoinSubstitution([FindPackageShare(description_package), "config", controllers_file]),
             {"use_sim_time": use_sim_time},
         ],
@@ -123,21 +119,21 @@ def launch_setup(context, *args, **kwargs):
     joint_state_broadcaster_spawner = Node(
         package='controller_manager',
         executable='spawner',
-        arguments=['joint_state_broadcaster', '--controller-manager', '/controller_manager'],
+        arguments=['joint_state_broadcaster'],
         output='screen',
     )
 
     joint_trajectory_controller_spawner = Node(
         package='controller_manager',
         executable='spawner',
-        arguments=['joint_traj_cont', '--controller-manager', '/controller_manager'],
+        arguments=['arm_controller'],
         output='screen',
     )
 
     diff_drive_controller_spawner = Node(
         package='controller_manager',
         executable='spawner',
-        arguments=['diff_drive_cont', '--controller-manager', '/controller_manager'],
+        arguments=['base_controller'],
         output='screen',
     )
 
@@ -149,7 +145,7 @@ def launch_setup(context, *args, **kwargs):
     )
 
     rviz_config_file = PathJoinSubstitution(
-        [FindPackageShare(description_package), "rviz", "view.rviz"]
+        [FindPackageShare(description_package), "rviz", "gazebo.rviz"]
     )
 
     rviz_node = Node(
@@ -170,7 +166,7 @@ def launch_setup(context, *args, **kwargs):
 
     return [
         robot_state_publisher_node,
-        controller_manager_node,
+        # controller_manager_node,
         gzserver,
         gzclient,
         spawn_robot,
@@ -202,14 +198,6 @@ def generate_launch_description():
             "controllers_file",
             default_value="ros2_control.yaml",
             description="Controllers configuration file.",
-        ),
-    )
-    # Initial value file name
-    declared_arguments.append(
-        DeclareLaunchArgument(
-            "initial_value_file_name",
-            default_value="initial_value.yaml",
-            description="Initial Value",
         ),
     )
     # Launch RViz
