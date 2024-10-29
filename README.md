@@ -95,13 +95,20 @@ Want to test integrate model move on a rviz following as:
         max_effort: 10.0\
       }\
     }"
-```
-3. Mobile Base Move with command
-  - ros2 topic pub
+    ```
+3. Mobile Base Move with command:
+  - ros2 topic pub:
     ```bash
-    ros2 topic pub /diff_drive_cont/cmd_vel_unstamped geometry_msgs/msg/Twist "\
+    ros2 topic pub -r 100 /diff_drive_cont/cmd_vel_unstamped geometry_msgs/msg/Twist "\
     {\
       linear: {x: 0.0, y: 0.0, z: 0.0}, \
       angular: {x: 0.0, y: 0.0, z: -1.0}\
-    }" -r 10
+    }"
     ```
+  
+  - ros2 run teleop_twist_keyboard :
+    ```bash
+    ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -r cmd_vel:=base_controller/cmd_vel_unstamped
+    ```
+  
+  - asd:
