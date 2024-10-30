@@ -13,6 +13,7 @@ def launch_setup(context, *args, **kwargs):
     controllers_file = LaunchConfiguration('controllers_file')
     launch_rviz = LaunchConfiguration('launch_rviz')
     use_sim_time = LaunchConfiguration('use_sim_time')
+    select_camera = LaunchConfiguration('select_camera')
     
     robot_ip = LaunchConfiguration('robot_ip')
     username = LaunchConfiguration('username')
@@ -62,6 +63,7 @@ def launch_setup(context, *args, **kwargs):
             "simulation_controllers:=", controllers_file, " ",
             "isaac_joint_commands:=", isaac_joint_commands, " ",
             "isaac_joint_states:=", isaac_joint_states, " ",
+            "select_camera:=", select_camera
         ]
     )
     robot_description = {'robot_description': ParameterValue(robot_description_content, value_type=str)}
@@ -140,7 +142,11 @@ def launch_setup(context, *args, **kwargs):
     spawn_controllers_handler = RegisterEventHandler(
         event_handler=OnProcessExit(
             target_action=spawn_robot,
-            on_exit=[joint_state_broadcaster_spawner, joint_trajectory_controller_spawner, diff_drive_controller_spawner],
+            on_exit=[
+                joint_state_broadcaster_spawner,
+                joint_trajectory_controller_spawner,
+                diff_drive_controller_spawner
+            ],
         ) 
     )
 
@@ -204,7 +210,7 @@ def generate_launch_description():
     declared_arguments.append(
         DeclareLaunchArgument(
             "launch_rviz",
-            default_value="true",
+            default_value="false",
             description="Launch RViz?",
         ),
     )
@@ -214,6 +220,15 @@ def generate_launch_description():
             "use_sim_time",
             default_value="true",
             description="Use simulation time if true",
+        ),
+    )
+    # Select Camera
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "select_camera",
+            choices=["base_camera", "gripper_camera", "both"],
+            default_value="both",
+            description="Select camera view.",
         ),
     )
     # Robot Ip
