@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<xacro:macro name="gazebo_camera" params="
+		camera_frame
+		color_camera_optical_frame
+		depth_camera_optical_frame
+		camera_width
+		camera_height
+		camera_fps
+		horizontal_fov">
+
+		<gazebo reference="${camera_frame}_color_frame">
+			<sensor name="${camera_frame}_color_sensor" type="camera">
+				<pose>0 0 0 0 0 0</pose>
+				<always_on>1</always_on>
+				<visualize>true</visualize>
+				<update_rate>${camera_fps}</update_rate>
+				<camera>
+					<horizontal_fov>${horizontal_fov}</horizontal_fov>
+					<image>
+						<format>R8G8B8</format>
+						<width>${camera_width}</width>
+						<height>${camera_height}</height>
+					</image>
+					<clip>
+						<near>0.05</near>
+						<far>10.0</far>
+					</clip>
+				</camera>
+				<plugin name="${camera_frame}_color_controller" filename="libgazebo_ros_camera.so">
+					<frame_name>${color_camera_optical_frame}</frame_name>
+					<image_topic>${camera_frame}/color/image_raw</image_topic>
+					<camera_info_topic>${camera_frame}/color/camera_info</camera_info_topic>
+				</plugin>
+			</sensor>
+		</gazebo>
+		<gazebo reference="${camera_frame}_depth_frame">
+			<sensor name="${camera_frame}_depth_sensor" type="depth">
+				<pose>0 0 0 0 0 0</pose>
+				<always_on>1</always_on>
+				<visualize>true</visualize>
+				<update_rate>${camera_fps}</update_rate>
+				<camera>
+					<horizontal_fov>${horizontal_fov}</horizontal_fov>
+					<image>
+						<format>B8G8R8</format>
+						<width>${camera_width}</width>
+						<height>${camera_height}</height>
+					</image>
+					<clip>
+						<near>0.05</near>
+						<far>10.0</far>
+					</clip>
+				</camera>
+				<plugin name="${camera_frame}_depth" filename="libgazebo_ros_camera.so">
+					<frame_name>${depth_camera_optical_frame}</frame_name>
+					<min_depth>0.1</min_depth>
+					<max_depth>10.0</max_depth>
+					<image_topic>${camera_frame}/depth/image_raw</image_topic>
+					<camera_info_topic>${camera_frame}/depth/camera_info</camera_info_topic>
+					<point_cloud_topic>${camera_frame}/depth/points</point_cloud_topic>
+				</plugin>
+			</sensor>
+		</gazebo>
+	</xacro:macro>
+</robot>

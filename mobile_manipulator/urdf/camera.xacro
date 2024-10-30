@@ -21,8 +21,6 @@
   <xacro:property name="horizontal_fov" value="${69.4 * M_PI / 180}"/>
   <xacro:property name="rgb_horizontal_fov" value="${69.4 * M_PI / 180}"/>
   <xacro:property name="depth_horizontal_fov" value="${85.2 * M_PI / 180}"/>
-
-  <xacro:include filename="$(find mobile_manipulator)/urdf/gazebo_settings.xacro"/>
   
   <xacro:macro name="camera" params="
     parent
@@ -86,14 +84,73 @@
       </joint>
       <link name="${parent}_color_optical_frame"/>
 
-      <xacro:gazebo_camera
-        camera_frame="${parent}"
-        color_camera_optical_frame="${parent}_color_optical_frame"
-        depth_camera_optical_frame="${parent}_depth_optical_frame"
-        camera_width="${camera_width}"
-        camera_height="${camera_height}"
-        camera_fps="${camera_fps}"
-        horizontal_fov="${rgb_horizontal_fov}"/>
+      <joint name="${parent}_infra1_joint" type="fixed">
+        <origin xyz="0 ${d435_cam_depth_to_infra1_offset} 0" rpy="0 0 0" />
+        <parent link="${parent}_depth_frame" />
+        <child link="${parent}_infra1_frame" />
+      </joint>
+      <link name="${parent}_infra1_frame"/>
+
+      <joint name="${parent}_infra1_optical_joint" type="fixed">
+        <origin xyz="0 0 0" rpy="${-M_PI/2} 0 ${-M_PI/2}" />
+        <parent link="${parent}_infra1_frame" />
+        <child link="${parent}_infra1_optical_frame" />
+      </joint>
+      <link name="${parent}_infra1_optical_frame"/>
+
+      <joint name="${parent}_infra2_joint" type="fixed">
+        <origin xyz="0 ${d435_cam_depth_to_infra2_offset} 0" rpy="0 0 0" />
+        <parent link="${parent}_depth_frame" />
+        <child link="${parent}_infra2_frame" />
+      </joint>
+      <link name="${parent}_infra2_frame"/>
+
+      <joint name="${parent}_infra2_optical_joint" type="fixed">
+        <origin xyz="0 0 0" rpy="${-M_PI/2} 0 ${-M_PI/2}" />
+        <parent link="${parent}_infra2_frame" />
+        <child link="${parent}_infra2_optical_frame" />
+      </joint>
+      <link name="${parent}_infra2_optical_frame"/>
+
+      <joint name="${parent}_accel_joint" type="fixed">
+        <origin xyz = "-0.01174 -0.00552 0.0051" rpy = "0 0 0" />
+        <parent link="${parent}_depth_frame" />
+        <child link="${parent}_accel_frame" />
+      </joint>
+      <link name="${parent}_accel_frame"/>
+
+      <joint name="${parent}_accel_optical_joint" type="fixed">
+        <origin xyz = "0 0 0" rpy = "${-M_PI/2} 0 ${-M_PI/2}" />
+        <parent link="${parent}_accel_frame" />
+        <child link="${parent}_accel_optical_frame" />
+      </joint>
+      <link name="${parent}_accel_optical_frame"/>
+
+      <joint name="${parent}_gyro_joint" type="fixed">
+        <origin xyz = "-0.01174 -0.00552 0.0051" rpy = "0 0 0" />
+        <parent link="${parent}_depth_frame" />
+        <child link="${parent}_gyro_frame" />
+      </joint>
+      <link name="${parent}_gyro_frame"/>
+
+      <joint name="${parent}_gyro_optical_joint" type="fixed">
+        <origin xyz = "0 0 0" rpy = "${-M_PI/2} 0 ${-M_PI/2}" />
+        <parent link="${parent}_gyro_frame" />
+        <child link="${parent}_gyro_optical_frame" />
+      </joint>
+      <link name="${parent}_gyro_optical_frame"/>
+      
+      <xacro:if value="${sim_gazebo}">
+        <xacro:include filename="$(find mobile_manipulator)/urdf/gazebo_camera.xacro"/>
+        <xacro:gazebo_camera
+          camera_frame="${parent}"
+          color_camera_optical_frame="${parent}_color_optical_frame"
+          depth_camera_optical_frame="${parent}_depth_optical_frame"
+          camera_width="${camera_width}"
+          camera_height="${camera_height}"
+          camera_fps="${camera_fps}"
+          horizontal_fov="${rgb_horizontal_fov}"/>
+      </xacro:if>
     </xacro:if>
   </xacro:macro>
 </robot>

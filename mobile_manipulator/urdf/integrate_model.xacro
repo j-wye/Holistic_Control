@@ -21,7 +21,6 @@
   <xacro:include filename="$(find mobile_manipulator)/urdf/inertial.xacro" />
   <xacro:include filename="$(find mobile_manipulator)/urdf/camera.xacro"/>
   <xacro:include filename="$(find mobile_manipulator)/urdf/integrate_ros2_control.xacro" />
-  <xacro:include filename="$(find mobile_manipulator)/urdf/gazebo_settings.xacro" />
 
 	<xacro:macro name="load_model" params="
     vision
@@ -43,7 +42,9 @@
     gripper_max_force
     isaac_joint_commands
     isaac_joint_states
-    initial_value">
+    initial_value
+    select_camera
+    root_link">
 
     <xacro:mobile_manipulator_control
       use_fake_hardware="${use_fake_hardware}"
@@ -54,33 +55,58 @@
       isaac_joint_commands="${isaac_joint_commands}"
       isaac_joint_states="${isaac_joint_states}"
       initial_value="${initial_value}"/>
+    
+    <xacro:if value="${sim_gazebo}">
+      <xacro:include filename="$(find mobile_manipulator)/urdf/gazebo_settings.xacro"/>
+    </xacro:if>
 
+    <xacro:unless value="${select_camera == 'both'}">
+      <xacro:camera
+        parent="${select_camera}"
+        sim_gazebo="${sim_gazebo}"
+        sim_ignition="${sim_ignition}"
+        sim_isaac="${sim_isaac}"/>
+    </xacro:unless>
+    <xacro:if value="${select_camera == 'both'}">
+      <xacro:camera
+        parent="base_camera"
+        sim_gazebo="${sim_gazebo}"
+        sim_ignition="${sim_ignition}"
+        sim_isaac="${sim_isaac}"/>
+      <xacro:camera
+        parent="gripper_camera"
+        sim_gazebo="${sim_gazebo}"
+        sim_ignition="${sim_ignition}"
+        sim_isaac="${sim_isaac}"/>
+    </xacro:if>
 
-    <link name="base_link"/>
+    <link name="${root_link}"/>
     <joint name="base_body_joint" type="fixed">
       <origin xyz="0 0 ${total_height}" rpy="0 0 0" />
-      <parent link="base_link" />
+      <parent link="${root_link}" />
       <child link="base_body" />
     </joint>
     <link name="base_body">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0" />
         <geometry>
-          <mesh filename="file://$(find mobile_manipulator)/meshes/base/base_body.stl" />
+          <mesh filename="file://$(find mobile_manipulator)/meshes/base/base_body.dae" />
         </geometry>
         <material name="">
-          <color rgba="1 1 1 1" />
+          <color rgba="0.9 0.9 0.9 1" />
         </material>
       </visual>
       <collision>
         <origin xyz="0 0 0" rpy="0 0 0" />
         <geometry>
-          <mesh filename="file://$(find mobile_manipulator)/meshes/base/base_body.stl" />
+          <mesh filename="file://$(find mobile_manipulator)/meshes/base/base_body.dae" />
         </geometry>
       </collision>
-      <xacro:inertial_box mass="${base_body_mass}" x="0.4" y="0.4" z="0.26344">
+      <inertial>
         <origin xyz="0 0 0" rpy="0 0 0" />
-      </xacro:inertial_box>
+        <mass value="24.3948952632956"/>
+        <inertia ixx="0.46740204277109515" ixy="0.0" ixz="0.0" iyy="0.49988844960833406" iyz="0.0" izz="0.6830169665791092"/>
+      </inertial>
     </link>
 
     <joint name="fl_joint" type="continuous">
@@ -105,11 +131,12 @@
           <mesh filename="file://$(find mobile_manipulator)/meshes/base/front_wheel.stl" />
         </geometry>
       </collision>
-      <xacro:inertial_cylinder mass="${front_wheel_mass}" length="${front_wheel_depth}" radius="${front_wheel_radius}">
+      <inertial>
         <origin rpy="${M_PI/2} 0 0" xyz="0 0 0" />
-      </xacro:inertial_cylinder>
+        <mass value="1.0"/>
+        <inertia ixx="0.0019279078912994342" ixy="0.0" ixz="0.0" iyy="0.002196651467892464" iyz="0.0" izz="0.0019354234556488066"/>
+      </inertial>
     </link>
-
 
     <joint name="fr_joint" type="continuous">
       <origin xyz="0.05 -${front_wheel_length} ${front_wheel_radius - total_height}" rpy="${M_PI/2} 0 0" />
@@ -160,9 +187,11 @@
           <mesh filename="file://$(find mobile_manipulator)/meshes/base/rear_wheel_bracket.stl" />
         </geometry>
       </collision>
-      <xacro:inertial_cylinder mass="${rear_wheel_bracket_mass}" length="0.0453" radius="0.01">
+      <inertial>
         <origin rpy="0 0 ${M_PI/2}" xyz="0 0 0" />
-      </xacro:inertial_cylinder>
+        <mass value="0.2"/>
+        <inertia ixx="0.00013159890969570431" ixy="0.0" ixz="0.0" iyy="9.391545660800508e-05" iyz="0.0" izz="9.588501204560543e-05"/>
+      </inertial>
     </link>
 
 
@@ -188,9 +217,11 @@
           <mesh filename="file://$(find mobile_manipulator)/meshes/base/rear_wheel.stl" />
         </geometry>
       </collision>
-      <xacro:inertial_cylinder mass="${rear_wheel_mass}" length="${rear_wheel_depth}" radius="${rear_wheel_radius}">
+      <inertial>
         <origin rpy="0 -${M_PI/2} 0" xyz="0 0 0" />
-      </xacro:inertial_cylinder>
+        <mass value="0.1"/>
+        <inertia ixx="7.041666957239336e-05" ixy="0.0" ixz="0.0" iyy="4.221666458075251e-05" iyz="0.0" izz="4.2216672652214985e-05"/>
+      </inertial>
     </link>
 
 
@@ -216,9 +247,11 @@
           <mesh filename="file://$(find mobile_manipulator)/meshes/base/rear_wheel_bracket.stl" />
         </geometry>
       </collision>
-      <xacro:inertial_cylinder mass="${rear_wheel_bracket_mass}" length="0.0453" radius="0.01">
+      <inertial>
         <origin rpy="0 0 ${M_PI/2}" xyz="0 0 0" />
-      </xacro:inertial_cylinder>
+        <mass value="0.2"/>
+        <inertia ixx="0.00013159890969570431" ixy="0.0" ixz="0.0" iyy="9.391545660800508e-05" iyz="0.0" izz="9.588501204560543e-05"/>
+      </inertial>
     </link>
 
     <joint name="rr_wheel_joint" type="continuous">
@@ -243,9 +276,11 @@
           <mesh filename="file://$(find mobile_manipulator)/meshes/base/rear_wheel.stl" />
         </geometry>
       </collision>
-      <xacro:inertial_cylinder mass="${rear_wheel_mass}" length="${rear_wheel_depth}" radius="${rear_wheel_radius}">
+      <inertial>
         <origin rpy="0 ${M_PI/2} 0" xyz="0 0 0" />
-      </xacro:inertial_cylinder>
+        <mass value="0.1"/>
+        <inertia ixx="7.041666957239336e-05" ixy="0.0" ixz="0.0" iyy="4.221666458075251e-05" iyz="0.0" izz="4.2216672652214985e-05"/>
+      </inertial>
     </link>
 
     
@@ -266,7 +301,10 @@
       </visual>
     </link>
     <xacro:if value='${sim_gazebo}'>
-      <xacro:gazebo_lidar parent="laser_link"/>
+      <xacro:include filename="$(find mobile_manipulator)/urdf/gazebo_lidar.xacro"/>
+      <xacro:gazebo_lidar
+        parent="laser_link"
+        M_PI="${M_PI}"/>
     </xacro:if>
     
 
@@ -291,16 +329,12 @@
           <mesh filename="file://$(find mobile_manipulator)/meshes/base/d435.dae" />
         </geometry>
       </collision>
-      <xacro:inertial_box mass="${camera_mass}" x="0.090" y="0.02505" z="0.025">
+      <inertial>
         <origin xyz="0 0 0" rpy="${M_PI/2} 0 ${M_PI/2}" />
-      </xacro:inertial_box>
+        <mass value="0.072"/>
+        <inertia ixx="9.629878986920582e-08" ixy="0.0" ixz="0.0" iyy="9.066202067596043e-08" iyz="0.0" izz="8.152728868205359e-08"/>
+      </inertial>
     </link>
-    <xacro:camera
-      parent="base_camera"
-      sim_gazebo="${sim_gazebo}"
-      sim_ignition="${sim_ignition}"
-      sim_isaac="${sim_isaac}"/>
-
 
     <joint name="base_arm_connector_joint" type="fixed">
       <origin xyz="0 0 0.0576" rpy="0 0 0" />
@@ -323,13 +357,21 @@
           <mesh filename="file://$(find mobile_manipulator)/meshes/base/base_arm_connector.stl" />
         </geometry>
       </collision>
-      <xacro:inertial_truncated_cone mass="${base_arm_connector_mass}" r1="0.03697" r2="0.05137" height="0.0576">
+      <inertial>
         <origin xyz="0 0 -0.0288" rpy="0 0 0" />
-      </xacro:inertial_truncated_cone>
+        <mass value="0.3"/>
+        <inertia ixx="0.0003466848480450177" ixy="0.0" ixz="0.0" iyy="0.0003466848480450177" iyz="0.0" izz="0.0005274816803315207"/>
+      </inertial>
     </link>
     <gazebo reference="base_arm_connector">
       <xacro:if value='${sim_gazebo}'>
-        <material>Gazebo/Gray</material>
+        <visual>
+          <material>
+            <diffuse>0.79216 0.81961 0.93333 1</diffuse>
+            <ambient>0.79216 0.81961 0.93333 1</ambient>
+            <specular>0.79216 0.81961 0.93333 1</specular>
+          </material>
+        </visual>
       </xacro:if>
       <xacro:unless value='${sim_gazebo}'>
         <material>Kortex/Gray</material>
@@ -366,7 +408,13 @@
     </link>
     <gazebo reference="arm_base_link">
       <xacro:if value='${sim_gazebo}'>
-        <material>Gazebo/Gray</material>
+        <visual>
+          <material>
+            <diffuse>0.803 0.824 0.820 1</diffuse>
+            <ambient>0.803 0.824 0.820 1</ambient>
+            <specular>0.803 0.824 0.820 1</specular>
+          </material>
+        </visual>
       </xacro:if>
       <xacro:unless value='${sim_gazebo}'>
         <material>Kortex/Gray</material>
@@ -387,7 +435,7 @@
         <geometry>
           <mesh filename="file://$(find mobile_manipulator)/meshes/arm/shoulder_link.STL" />
         </geometry>
-        <material name="">
+        <material name="Kortex_Gray">
           <color rgba="0.803 0.824 0.820 1" />
         </material>
       </visual>
@@ -405,7 +453,13 @@
     </link>
     <gazebo reference="arm_link_1">
       <xacro:if value='${sim_gazebo}'>
-        <material>Gazebo/Gray</material>
+        <visual>
+          <material>
+            <diffuse>0.803 0.824 0.820 1</diffuse>
+            <ambient>0.803 0.824 0.820 1</ambient>
+            <specular>0.803 0.824 0.820 1</specular>
+          </material>
+        </visual>
       </xacro:if>
       <xacro:unless value='${sim_gazebo}'>
         <material>Kortex/Gray</material>
@@ -444,14 +498,20 @@
     </link>
     <gazebo reference="arm_link_2">
       <xacro:if value='${sim_gazebo}'>
-        <material>Gazebo/Gray</material>
+        <visual>
+          <material>
+            <diffuse>0.803 0.824 0.820 1</diffuse>
+            <ambient>0.803 0.824 0.820 1</ambient>
+            <specular>0.803 0.824 0.820 1</specular>
+          </material>
+        </visual>
       </xacro:if>
       <xacro:unless value='${sim_gazebo}'>
         <material>Kortex/Gray</material>
       </xacro:unless>
     </gazebo>
 
-		
+
     <joint name="arm_joint_3" type="revolute">
       <origin xyz="0 0.28 0" rpy="-${M_PI} 0 0" />
       <parent link="arm_link_2" />
@@ -483,7 +543,13 @@
     </link>
     <gazebo reference="arm_link_3">
       <xacro:if value='${sim_gazebo}'>
-        <material>Gazebo/Gray</material>
+        <visual>
+          <material>
+            <diffuse>0.803 0.824 0.820 1</diffuse>
+            <ambient>0.803 0.824 0.820 1</ambient>
+            <specular>0.803 0.824 0.820 1</specular>
+          </material>
+        </visual>
       </xacro:if>
       <xacro:unless value='${sim_gazebo}'>
         <material>Kortex/Gray</material>
@@ -522,7 +588,13 @@
     </link>
     <gazebo reference="arm_link_4">
       <xacro:if value='${sim_gazebo}'>
-        <material>Gazebo/Gray</material>
+        <visual>
+          <material>
+            <diffuse>0.803 0.824 0.820 1</diffuse>
+            <ambient>0.803 0.824 0.820 1</ambient>
+            <specular>0.803 0.824 0.820 1</specular>
+          </material>
+        </visual>
       </xacro:if>
       <xacro:unless value='${sim_gazebo}'>
         <material>Kortex/Gray</material>
@@ -561,7 +633,13 @@
     </link>
     <gazebo reference="arm_link_5">
       <xacro:if value='${sim_gazebo}'>
-        <material>Gazebo/Gray</material>
+        <visual>
+          <material>
+            <diffuse>0.803 0.824 0.820 1</diffuse>
+            <ambient>0.803 0.824 0.820 1</ambient>
+            <specular>0.803 0.824 0.820 1</specular>
+          </material>
+        </visual>
       </xacro:if>
       <xacro:unless value='${sim_gazebo}'>
         <material>Kortex/Gray</material>
@@ -576,25 +654,7 @@
       <axis xyz="0 0 1" />
       <limit lower="-2.59" upper="2.59" effort="7" velocity="3.2" />
     </joint>
-    <link name="end_effector_link">
-      <inertial>
-        <origin rpy="0 0 0" xyz="0 0 0"/>
-        <mass value="0.01"/>
-        <inertia ixx="1e-5" ixy="0" ixz="0" iyy="1e-5" iyz="0" izz="1e-5"/>
-      </inertial>
-      <visual>
-        <origin rpy="0 0 0" xyz="0 0 0"/>
-        <geometry>
-          <sphere radius="0.001"/>
-        </geometry>
-      </visual>
-      <collision>
-        <origin rpy="0 0 0" xyz="0 0 0"/>
-        <geometry>
-          <sphere radius="0.001"/>
-        </geometry>
-      </collision>
-    </link>
+    <link name="end_effector_link"/>
 
 
     <joint name="tool_frame_joint" type="fixed">
@@ -602,25 +662,7 @@
       <parent link="end_effector_link" />
       <child link="tool_frame" />
     </joint>
-    <link name="tool_frame">
-      <inertial>
-        <origin rpy="0 0 0" xyz="0 0 0"/>
-        <mass value="0.01"/>
-        <inertia ixx="1e-5" ixy="0" ixz="0" iyy="1e-5" iyz="0" izz="1e-5"/>
-      </inertial>
-      <visual>
-        <origin rpy="0 0 0" xyz="0 0 0"/>
-        <geometry>
-          <sphere radius="0.001"/>
-        </geometry>
-      </visual>
-      <collision>
-        <origin rpy="0 0 0" xyz="0 0 0"/>
-        <geometry>
-          <sphere radius="0.001"/>
-        </geometry>
-      </collision>
-    </link>
+    <link name="tool_frame"/>
 
     
     <joint name="camera_case_joint" type="fixed">
@@ -648,9 +690,6 @@
         <origin xyz="-0.01254 0 0" rpy="0 0 0" />
       </xacro:inertial_box>
     </link>
-    <gazebo reference="camera_case_link">
-      <material>Gazebo/Black</material>
-    </gazebo>
 
 
     <joint name="gripper_camera_joint" type="fixed">
@@ -678,11 +717,6 @@
         <origin xyz="0 0 0" rpy="${M_PI/2} 0 ${M_PI/2}" />
       </xacro:inertial_box>
     </link>
-    <xacro:camera
-      parent="gripper_camera"
-      sim_gazebo="${sim_gazebo}"
-      sim_ignition="${sim_ignition}"
-      sim_isaac="${sim_isaac}"/>
 
 
 		<joint name="gripper_base_joint" type="fixed">
@@ -714,7 +748,13 @@
     </link>
     <gazebo reference="gripper_base_link">
       <xacro:if value='${sim_gazebo}'>
-        <material>Gazebo/Gray</material>
+        <visual>
+          <material>
+            <diffuse>0.803 0.824 0.820 1</diffuse>
+            <ambient>0.803 0.824 0.820 1</ambient>
+            <specular>0.803 0.824 0.820 1</specular>
+          </material>
+        </visual>
       </xacro:if>
       <xacro:unless value='${sim_gazebo}'>
         <material>Kortex/Gray</material>
@@ -753,7 +793,13 @@
     </link>
     <gazebo reference="right_finger_prox_link">
       <xacro:if value='${sim_gazebo}'>
-        <material>Gazebo/Gray</material>
+        <visual>
+          <material>
+            <diffuse>0.803 0.824 0.820 1</diffuse>
+            <ambient>0.803 0.824 0.820 1</ambient>
+            <specular>0.803 0.824 0.820 1</specular>
+          </material>
+        </visual>
       </xacro:if>
       <xacro:unless value='${sim_gazebo}'>
         <material>Kortex/Gray</material>
@@ -793,7 +839,13 @@
     </link>
     <gazebo reference="right_finger_dist_link">
       <xacro:if value='${sim_gazebo}'>
-        <material>Gazebo/Blue</material>
+        <visual>
+          <material>
+            <diffuse>0 0.055 0.525 1</diffuse>
+            <ambient>0 0.055 0.525 1</ambient>
+            <specular>0 0.055 0.525 1</specular>
+          </material>
+        </visual>
       </xacro:if>
       <xacro:unless value='${sim_gazebo}'>
         <material>Kortex/Blue</material>
@@ -833,7 +885,13 @@
     </link>
     <gazebo reference="left_finger_prox_link">
       <xacro:if value='${sim_gazebo}'>
-        <material>Gazebo/Gray</material>
+        <visual>
+          <material>
+            <diffuse>0.803 0.824 0.820 1</diffuse>
+            <ambient>0.803 0.824 0.820 1</ambient>
+            <specular>0.803 0.824 0.820 1</specular>
+          </material>
+        </visual>
       </xacro:if>
       <xacro:unless value='${sim_gazebo}'>
         <material>Kortex/Gray</material>
@@ -873,7 +931,13 @@
     </link>
     <gazebo reference="left_finger_dist_link">
       <xacro:if value='${sim_gazebo}'>
-        <material>Gazebo/Blue</material>
+        <visual>
+          <material>
+            <diffuse>0 0.055 0.525 1</diffuse>
+            <ambient>0 0.055 0.525 1</ambient>
+            <specular>0 0.055 0.525 1</specular>
+          </material>
+        </visual>
       </xacro:if>
       <xacro:unless value='${sim_gazebo}'>
         <material>Kortex/Blue</material>

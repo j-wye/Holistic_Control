@@ -11,8 +11,8 @@
 	<xacro:arg name="use_internal_bus_gripper_comm" default="false"/>
 	<xacro:arg name="use_fake_hardware" default="false"/>
 	<xacro:arg name="fake_sensor_commands" default="false"/>
-	<xacro:arg name="sim_gazebo" default="true"/>
-	<xacro:arg name="sim_ignition" default="false"/>
+	<xacro:arg name="sim_gazebo" default="false"/>
+	<xacro:arg name="sim_ignition" default="true"/>
 	<xacro:arg name="sim_isaac" default="false"/>
 	<xacro:arg name="gripper_joint_name" default="right_finger_bottom_joint"/>
 	<xacro:arg name="gripper_max_velocity" default="100.0"/>
@@ -23,14 +23,18 @@
 	<xacro:arg name="isaac_joint_states" default="/isaac_joint_states"/>
 	<xacro:arg name="simulation_controllers" default="$(find mobile_manipulator)/config/ros2_control.yaml"/>
 	<xacro:arg name="initial_value" default="$(find mobile_manipulator)/config/initial_value.yaml"/>
+	<xacro:arg name="select_camera" default="both"/>
 	<xacro:property name="initial_value" default="$(arg initial_value)"/>
-  <xacro:property name="camera_width" value="1280"/>
-  <xacro:property name="camera_height" value="720"/>
-  <xacro:property name="camera_fps" value="30"/>
-  <xacro:property name="M_PI" value="3.1415926535897931" />
-  <xacro:property name="horizontal_fov" value="${69.4 * M_PI / 180}"/>
 
 	<xacro:include filename="$(find mobile_manipulator)/urdf/integrate_model.xacro"/>
+
+
+	<xacro:if value="$(arg sim_ignition)">
+		<xacro:property name="root_link" default="world"/>
+	</xacro:if>
+	<xacro:unless value="$(arg sim_ignition)">
+		<xacro:property name="root_link" default="base_link"/>
+	</xacro:unless>
 
 	<xacro:load_model
 		vision="$(arg vision)"
@@ -52,7 +56,9 @@
 		gripper_max_force="$(arg gripper_max_force)"
 		isaac_joint_commands="$(arg isaac_joint_commands)"
 		isaac_joint_states="$(arg isaac_joint_states)"
-		initial_value="${xacro.load_yaml(initial_value)}"/>
+		initial_value="${xacro.load_yaml(initial_value)}"
+		select_camera="$(arg select_camera)"
+		root_link="${root_link}"/>
 
 	<xacro:if value="$(arg sim_gazebo)">
 		<gazebo>
@@ -66,12 +72,13 @@
     <gazebo>
 			<plugin filename="libign_ros2_control-system.so" name="ign_ros2_control::IgnitionROS2ControlPlugin">
 				<namespace>/</namespace>
-				<parameters>$(arg simulation_controllers)</parameters>
+				<parameters>$(find mobile_manipulator)/config/ros2_control.yaml</parameters>
 				<controller_manager_node_name>controller_manager</controller_manager_node_name>
 			</plugin>
 			<plugin filename="libignition-gazebo-sensors-system.so" name="ignition::gazebo::systems::Sensors">
 				<render_engine>$(arg gazebo_renderer)</render_engine>
 			</plugin>
-		</gazebo>
+    	<plugin filename="ignition-gazebo-joint-state-publisher-system" name="ignition::gazebo::systems::JointStatePublisher"/>
+  	</gazebo>
 	</xacro:if>
 </robot>

@@ -1,100 +1,123 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <xacro:property name="M_PI" value="3.14159265358979323846" />
+  <xacro:macro name="gazebo_kinematics" params="
+    reference
+    r g b
+    mu1
+    mu2
+    restitution_coefficient
+    kp
+    kd
+    max_vel
+    min_depth">
 
-	<xacro:macro name="gazebo_lidar" params="
-		parent">
+    <gazebo reference="${reference}">
+      <visual>
+        <material>
+          <diffuse>${r} ${g} ${b} 1.0</diffuse>
+          <ambient>${r} ${g} ${b} 1.0</ambient>
+          <specular>${r} ${g} ${b} 1.0</specular>
+        </material>
+      </visual>
+      <surface>
+        <friction>
+          <ode>
+            <mu1>${mu1}</mu1>
+            <mu2>${mu2}</mu2>
+          </ode>
+        </friction>
+        <bounce>
+          <restitution_coefficient>${restitution_coefficient}</restitution_coefficient>
+        </bounce>
+        <contact>
+          <ode>
+            <kp>${kp}</kp>
+            <kd>${kd}</kd>
+            <max_vel>${max_vel}</max_vel>
+            <min_depth>${min_depth}</min_depth>
+          </ode>
+        </contact>
+      </surface>
+    </gazebo>
+  </xacro:macro>
 
-		<gazebo reference="${parent}">
-			<material>Gazebo/Black</material>
-			<sensor name="2d_lidar" type="gpu_ray">
-				<pose>0 0 0 0 0 0</pose>
-				<visualize>true</visualize>
-				<update_rate>10</update_rate>
-				<ray>
-					<scan>
-						<horizontal>
-							<samples>720</samples>
-							<resolution>1</resolution>
-							<min_angle>-${M_PI}</min_angle>
-							<max_angle>${M_PI}</max_angle>
-						</horizontal>
-					</scan>
-					<range>
-						<min>0.1</min>
-						<max>12.0</max>
-						<resolution>0.01</resolution>
-					</range>
-				</ray>
-				<plugin name="gazebo_ros_lidar" filename="libgazebo_ros_ray_sensor.so">
-					<output_type>sensor_msgs/LaserScan</output_type>
-					<frame_name>${parent}</frame_name>
-				</plugin>
-			</sensor>
-		</gazebo>
-	</xacro:macro>
+	<gazebo reference="base_body">
+    <visual>
+      <material>
+        <diffuse>0.9 0.9 0.9 1</diffuse>
+        <ambient>0.9 0.9 0.9 1</ambient>
+        <specular>0.9 0.9 0.9 1</specular>
+      </material>
+    </visual>
+  </gazebo>
+  <gazebo reference="camera_case_link">
+    <visual>
+      <material>
+        <diffuse>0.1 0.1 0.1 1</diffuse>
+        <ambient>0.1 0.1 0.1 1</ambient>
+        <specular>0.1 0.1 0.1 1</specular>
+      </material>
+    </visual>
+  </gazebo>
 
-	<xacro:macro name="gazebo_camera" params="
-		camera_frame
-		color_camera_optical_frame
-		depth_camera_optical_frame
-		camera_width
-		camera_height
-		camera_fps
-		horizontal_fov">
+  <xacro:gazebo_kinematics reference="fr_wheel"
+    r="0.175" g="0.175" b="0.175"
+    mu1="200"
+    mu2="200"
+    restitution_coefficient="0.0"
+    kp="100000.0"
+    kd="100.0"
+    max_vel="0.01"
+    min_depth="0.001"/>
+  
+  <xacro:gazebo_kinematics reference="fl_wheel"
+    r="0.175" g="0.175" b="0.175"
+    mu1="200"
+    mu2="200"
+    restitution_coefficient="0.0"
+    kp="100000.0"
+    kd="100.0"
+    max_vel="0.01"
+    min_depth="0.001"/>
+  
+  <xacro:gazebo_kinematics reference="rl_bracket"
+    r="0.175" g="0.175" b="0.175"
+    mu1="100"
+    mu2="100"
+    restitution_coefficient="0.0"
+    kp="100000.0"
+    kd="100.0"
+    max_vel="0.01"
+    min_depth="0.001"/>
+  
+  <xacro:gazebo_kinematics reference="rl_wheel"
+    r="0.175" g="0.175" b="0.175"
+    mu1="200"
+    mu2="200"
+    restitution_coefficient="0.0"
+    kp="100000.0"
+    kd="100.0"
+    max_vel="0.01"
+    min_depth="0.001"/>
+  
+  <xacro:gazebo_kinematics reference="rr_bracket"
+    r="0.175" g="0.175" b="0.175"
+    mu1="100"
+    mu2="100"
+    restitution_coefficient="0.0"
+    kp="100000.0"
+    kd="100.0"
+    max_vel="0.01"
+    min_depth="0.001"/>
+  
+  <xacro:gazebo_kinematics reference="rr_wheel"
+    r="0.175" g="0.175" b="0.175"
+    mu1="200"
+    mu2="200"
+    restitution_coefficient="0.0"
+    kp="100000.0"
+    kd="100.0"
+    max_vel="0.01"
+    min_depth="0.001"/>
 
-		<gazebo reference="${camera_frame}_color_frame">
-			<sensor name="${camera_frame}_color_sensor" type="camera">
-				<pose>0 0 0 0 0 0</pose>
-				<always_on>1</always_on>
-				<visualize>true</visualize>
-				<update_rate>${camera_fps}</update_rate>
-				<camera>
-					<horizontal_fov>${horizontal_fov}</horizontal_fov>
-					<image>
-						<format>R8G8B8</format>
-						<width>${camera_width}</width>
-						<height>${camera_height}</height>
-					</image>
-					<clip>
-						<near>0.05</near>
-						<far>10.0</far>
-					</clip>
-				</camera>
-				<plugin name="${camera_frame}_color_controller" filename="libgazebo_ros_camera.so">
-					<frame_name>${color_camera_optical_frame}</frame_name>
-					<image_topic>${camera_frame}/color/image_raw</image_topic>
-					<camera_info_topic>${camera_frame}/color/camera_info</camera_info_topic>
-				</plugin>
-			</sensor>
-		</gazebo>
-		<gazebo reference="${camera_frame}_depth_frame">
-			<sensor name="${camera_frame}_depth_sensor" type="depth">
-				<pose>0 0 0 0 0 0</pose>
-				<always_on>1</always_on>
-				<visualize>true</visualize>
-				<update_rate>${camera_fps}</update_rate>
-				<camera>
-					<horizontal_fov>${horizontal_fov}</horizontal_fov>
-					<image>
-						<format>B8G8R8</format>
-						<width>${camera_width}</width>
-						<height>${camera_height}</height>
-					</image>
-					<clip>
-						<near>0.05</near>
-						<far>10.0</far>
-					</clip>
-				</camera>
-				<plugin name="${camera_frame}_depth" filename="libgazebo_ros_camera.so">
-					<frame_name>${depth_camera_optical_frame}</frame_name>
-					<min_depth>0.1</min_depth>
-					<max_depth>10.0</max_depth>
-					<image_topic>${camera_frame}/depth/image_raw</image_topic>
-					<camera_info_topic>${camera_frame}/depth/camera_info</camera_info_topic>
-					<point_cloud_topic>${camera_frame}/depth/points</point_cloud_topic>
-				</plugin>
-			</sensor>
-		</gazebo>
-	</xacro:macro>
 </robot>
