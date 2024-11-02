@@ -90,7 +90,7 @@
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0" />
         <geometry>
-          <mesh filename="file://$(find mobile_manipulator)/meshes/base/base_body.dae" />
+          <mesh filename="file://$(find mobile_manipulator)/meshes/base/base_body.stl" />
         </geometry>
         <material name="">
           <color rgba="0.9 0.9 0.9 1" />
@@ -99,7 +99,7 @@
       <collision>
         <origin xyz="0 0 0" rpy="0 0 0" />
         <geometry>
-          <mesh filename="file://$(find mobile_manipulator)/meshes/base/base_body.dae" />
+          <mesh filename="file://$(find mobile_manipulator)/meshes/base/base_body.stl" />
         </geometry>
       </collision>
       <inertial>
