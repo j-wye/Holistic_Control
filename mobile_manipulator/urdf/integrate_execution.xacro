@@ -11,8 +11,8 @@
 	<xacro:arg name="use_internal_bus_gripper_comm" default="false"/>
 	<xacro:arg name="use_fake_hardware" default="false"/>
 	<xacro:arg name="fake_sensor_commands" default="false"/>
-	<xacro:arg name="sim_gazebo" default="false"/>
-	<xacro:arg name="sim_ignition" default="true"/>
+	<xacro:arg name="sim_gazebo" default="true"/>
+	<xacro:arg name="sim_ignition" default="false"/>
 	<xacro:arg name="sim_isaac" default="false"/>
 	<xacro:arg name="gripper_joint_name" default="right_finger_bottom_joint"/>
 	<xacro:arg name="gripper_max_velocity" default="100.0"/>
