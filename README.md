@@ -3,16 +3,17 @@
 ## Integrated Model
 - For some of the existing materials, the dimensions of the materials were different from my robot, so I designed my own
 
-#### How to Use
+#### How to Use :
 ```bash
 mkdir -p hc_ws/src && cd hc_ws
 git clone https://github.com/j-wye/Holistic_Control.git src/Holistic_Control
 mv src/Holistic_Control/* src/ && rm -rf src/Holistic_Control*
+colcon build && source install/setup.bash
 # vcs import src/controller_packages --input src/mobile_manipulator/settings.humble.repos
-# colcon build
-# source install/setup.bash
 # wget https://raw.githubusercontent.com/j-wye/Holistic_Control/main/whole_settings.sh
-
+```
+#### How to execute :
+```bash
 # View only Manipulator
 ros2 launch mobile_manipulator view.launch.py robot_type:=arm
 
@@ -21,6 +22,9 @@ ros2 launch mobile_manipulator view.launch.py robot_type:=base
 
 # View Integrate version with Mobile Base and Manipulator (default is integrate)
 ros2 launch mobile_manipulator view.launch.py
+
+# Launch with Gazebo and Rviz
+ros2 launch mobile_manipulator gazebo.launch.py rviz:=true
 ```
 
 Following image is integrate version of mobile manipulator
