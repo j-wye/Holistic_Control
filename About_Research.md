@@ -28,9 +28,21 @@
 
 #### Network Design
 
-- Input Sensor Data : Pointcloud from Base camera and Gripper Camera
+- Input Sensor Data :
+    - Pointcloud from Base camera and Gripper Camera
 
+- **SN**(SLAM Network) :
+    - RTAB-Map과 OctoMap의 integration으로 memory efficiency가 높은 구조를 선택
+    - Real-time을 충족시키기 위해 computational cost가 낮은 모델을 선정하고 rgb image 없이 only depth(pointcloud)로 vSLAM 진행
 
+- **EN**(Exploration Network) :
+    - SN에서 current pose data와 map data를 input으로 받아 explorable candidate set을 output으로 설정
+    - Output = {(x_i, y_i, z_i, H_i) | i = 1, ~ n}
+        - **ID**(Information Density) 자리에 원래 IG를 사용하려고 했지만, IG는 해당 위치에서 카메라가 관측할 것으로 예상하는 값을 말하고 이는 "관측 시나리오"까지 포함해서 성능 극대화에는 더 좋지만, 계산량이 늘어나고 구현 복잡도가 증가함
+        - 우선 초기 연구에서는 IG를 사용하지 않고 ID나 H(Entropy)를 사용해서 진행할 예정
+
+- **HCN**(Holistic Control Network) :
+    - EN에서 explorable candidate set을 input으로 받아 v, $$omega$$
 
 
 
@@ -38,8 +50,8 @@
 아직 구상중
 
 bc와 gc를 input sensor데이터로 사용
-이 데이터의 pointcloud로 RTab-Map을 통해 vSLAM 진행
-RTab-Map과 OctoMap의 integration으로 효율적인 Map 구성
+이 데이터의 pointcloud로 RTAB-Map을 통해 vSLAM 진행
+RTAB-Map과 OctoMap의 integration으로 효율적인 Map 구성
 
 current pose data와 map data를 기반으로 explorable candidate를 select하고 이를 통해 candidate set으로 설정
 => candidate set을 HCN에 input으로 전달
