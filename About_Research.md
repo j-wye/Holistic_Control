@@ -42,23 +42,19 @@
         - 우선 초기 연구에서는 IG를 사용하지 않고 ID나 H(Entropy)를 사용해서 진행할 예정
 
 - **HCN**(Holistic Control Network) :
-    - EN에서 explorable candidate set을 input으로 받아 v, $$omega$$
-
+    - EN에서 explorable candidate set을 input으로 받아 $$v_{base}, \omega_{base}, \theta_1, \theta_2, \theta_3, \theta_4, \theta_5, \theta_6$$ 으로 설정
+    - Kinodynamic적인 부분들을 포함시켜 Constraints와 Reward를 적절히 선정해서 설계
+    - Constraints & Reward :
+        - Manipulability (Joint Limit)
+        - Reachability
+        - Collision Avoidance (Self Collision, Environment Collision)
+        - Movement Cost
+        - Efficiency
+        - Entropy Decrease
+        - Reliability
 
 
 ```
-아직 구상중
-
-bc와 gc를 input sensor데이터로 사용
-이 데이터의 pointcloud로 RTAB-Map을 통해 vSLAM 진행
-RTAB-Map과 OctoMap의 integration으로 효율적인 Map 구성
-
-current pose data와 map data를 기반으로 explorable candidate를 select하고 이를 통해 candidate set으로 설정
-=> candidate set을 HCN에 input으로 전달
-=> HCN에서 candidate set을 어떻게 exploration할지 path planning을 진행 (어떤 위치로 어떤 순서로 움직일지)
-=> 해당 과정을 진행하기 위해 mobile base와 manipulator arm이 어떻게 움직일지 holistic control이 되도록 control logic에 해당하는 HCN 설계
-
-
 REWARD :
 1. Entropy 감소
 2. Viewpoint Diversity 증가 : 다양한 정보를 많이 얻도록 움직임 장려
