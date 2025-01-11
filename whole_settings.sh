@@ -3,12 +3,10 @@ sudo apt install ros-$ROS_DISTRO-kinematics-interface-kdl
 # vcs import src/controller_packages --input src/mobile_manipulator/settings.humble.repos
 sudo apt install ros-humble-openni2-* -y
 
-
-# For optimization build with all cores
-NUM_THREADS=$(lscpu | grep '^CPU(s):' | awk '{print $2}')
-echo "alias cb='colcon build --parallel-workers $NUM_THREADS --cmake-args -DCMAKE_BUILD_TYPE=Release'" >> ~/.bashrc
-source ~/.bashrc && cb
-source install/setup.bash
+# First install Mobile Manipulator packages
+cd && mkdir -p hc_ws/src && cd hc_ws
+git clone https://github.com/j-wye/Holistic_Control.git src/Holistic_Control
+mv src/Holistic_Control/* src/ && rm -rf src/Holistic_Control*
 
 # Install RTAB-Map
 # If you want to use multi-camera, before installing RTAB-Map, you need to install the following dependencies (opengv):
@@ -33,7 +31,6 @@ make -j$(nproc) && sudo make install
 git clone https://github.com/introlab/rtabmap_ros.git -b humble-devel
 cd ~/hc_ws
 rosdep update && rosdep install --from-paths src --ignore-src -r -y
-sb
 
 echo "export RCUTILS_LOGGING_USE_STDOUT=1" >> ~/.bashrc
 echo "export RCUTILS_LOGGING_BUFFERED_STREAM=1" >> ~/.bashrc
@@ -41,3 +38,13 @@ echo "export RCUTILS_LOGGING_BUFFERED_STREAM=1" >> ~/.bashrc
 echo "export RCUTILS_COLORIZED_OUTPUT=1" >> ~/.bashrc
 # Recommend to use cyclonedds than fastrtps
 export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+source ~/.bashrc
+
+colcon build --parallel-workers $NUM_THREADS --cmake-args -DRTABMAP_SYNC_MULTI_RGBD=ON -DRTABMAP_SYNC_USER_DATA=ON -DCMAKE_BUILD_TYPE=Release
+
+
+# For optimization build with all cores
+NUM_THREADS=$(lscpu | grep '^CPU(s):' | awk '{print $2}')
+colcon build --parallel-workers $NUM_THREADS --cmake-args -DCMAKE_BUILD_TYPE=Release
+source ~/.bashrc && cb
+source install/setup.bash
