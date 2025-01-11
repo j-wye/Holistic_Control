@@ -40,11 +40,7 @@ echo "export RCUTILS_COLORIZED_OUTPUT=1" >> ~/.bashrc
 export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 source ~/.bashrc
 
-colcon build --parallel-workers $NUM_THREADS --cmake-args -DRTABMAP_SYNC_MULTI_RGBD=ON -DRTABMAP_SYNC_USER_DATA=ON -DCMAKE_BUILD_TYPE=Release
-
-
-# For optimization build with all cores
 NUM_THREADS=$(lscpu | grep '^CPU(s):' | awk '{print $2}')
-colcon build --parallel-workers $NUM_THREADS --cmake-args -DCMAKE_BUILD_TYPE=Release
-source ~/.bashrc && cb
+colcon build --symlink-install --parallel-workers $NUM_THREADS --cmake-args -DRTABMAP_SYNC_MULTI_RGBD=ON -DRTABMAP_SYNC_USER_DATA=ON -DCMAKE_BUILD_TYPE=Release
 source install/setup.bash
+source ~/.bashrc
