@@ -11,9 +11,26 @@ source ~/.bashrc && cb
 source install/setup.bash
 
 # Install RTAB-Map
+# If you want to use multi-camera, before installing RTAB-Map, you need to install the following dependencies (opengv):
+cd && git clone https://github.com/laurentkneip/opengv.git
+cd opengv
+git checkout 91f4b19c73450833a40e463ad3648aae80b3a7f3
+wget https://gist.githubusercontent.com/matlabbe/a412cf7c4627253874f81a00745a7fbb/raw/accc3acf465d1ffd0304a46b17741f62d4d354ef/opengv_disable_march_native.patch
+git apply opengv_disable_march_native.patch
+mkdir build && cd build
+cmake -DCMAKE_BUILD_TYPE=Release ..
+make -j$(nproc) && sudo make install && cd
+rm -rf opengv
+
+# Now install RTAB-Map and RTAB-Map ROS with dependencies on ROS 2 Humble:
 cd ~/hc_ws/src && mkdir RTAB_Map && cd RTAB_Map
+mkdir rtabmap_db
 git clone https://github.com/introlab/rtabmap.git -b humble-devel
-git clone https://github.com/introlab/rtabmap_ros.git -b ros2
+cd rtabmap/build
+cmake -DWITH_OPENGV=ON ..
+make -j$(nproc) && sudo make install
+
+git clone https://github.com/introlab/rtabmap_ros.git -b humble-devel
 cd ~/hc_ws
 rosdep update && rosdep install --from-paths src --ignore-src -r -y
 sb
