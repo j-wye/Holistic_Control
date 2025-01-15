@@ -15,6 +15,6 @@ rviz:=true
 ```bash
 ros2 launch 
 ```
-<img src="./img/RT_rviz.png" >
-<img src="./img/RTviz_1.png" >
+<img src="./img/RT_rviz.png">
+<img src="./img/RTviz_1.png">
 <img src="./img/RTviz_2.png">
