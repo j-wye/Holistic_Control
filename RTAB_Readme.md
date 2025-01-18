@@ -11,6 +11,10 @@ use_sim_time:=true\
 rviz:=true
 ```
 
+## Issues
+- When code is interrupted, but node is still alive:
+    - ```ps aux | grep rtabmap``` => find PID, and ```kill -9 <PID>```
+
 ## How to use
 ```bash
 ros2 launch 
