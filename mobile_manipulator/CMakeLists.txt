@@ -18,7 +18,7 @@ install(
   launch
   meshes
   rviz
-  # scripts
+  scripts
   urdf
   worlds
   DESTINATION share/${PROJECT_NAME}
