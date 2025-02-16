@@ -15,6 +15,16 @@ rviz:=true
 - When code is interrupted, but node is still alive:
     - ```ps aux | grep rtabmap``` => find PID, and ```kill -9 <PID>```
 
+- When memory bandwidth causes issues:
+    - ```export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp```
+    - ```export ROS_LOCALHOST_ONLY=1```
+    - ```sudo ip link set lo multicast on```
+
+- If you get more memory bandwidth:
+    - ```export RMW_IMPLEMENTATION=rmw_fastrtps_cpp```
+    - ```export ROS_LOCALHOST_ONLY=0```
+
+
 ## How to use
 ```bash
 ros2 launch 
