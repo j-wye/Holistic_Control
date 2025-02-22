@@ -18,7 +18,7 @@ git apply opengv_disable_march_native.patch
 mkdir build && cd build
 cmake -DCMAKE_BUILD_TYPE=Release ..
 make -j$(nproc) && sudo make install && cd
-rm -rf opengv
+sudo rm -rf opengv
 
 # Now install RTAB-Map and RTAB-Map ROS with dependencies on ROS 2 Humble:
 cd ~/hc_ws/src && mkdir RTAB_Map && cd RTAB_Map
@@ -27,7 +27,7 @@ git clone https://github.com/introlab/rtabmap.git -b humble-devel
 cd rtabmap/build
 cmake -DWITH_OPENGV=ON ..
 make -j$(nproc) && sudo make install
-
+cd ../..
 git clone https://github.com/introlab/rtabmap_ros.git -b humble-devel
 cd ~/hc_ws
 rosdep update && rosdep install --from-paths src --ignore-src -r -y
@@ -40,6 +40,10 @@ echo "export RCUTILS_COLORIZED_OUTPUT=1" >> ~/.bashrc
 export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 source ~/.bashrc
 
+# Before colcon build, install the following dependencies:
+sudo apt install ros-humble-grid-map* ros-humble-libpointmatcher* -y
+
+# Now build the workspace
 NUM_THREADS=$(lscpu | grep '^CPU(s):' | awk '{print $2}')
 colcon build --symlink-install --parallel-workers $NUM_THREADS --cmake-args -DRTABMAP_SYNC_MULTI_RGBD=ON -DRTABMAP_SYNC_USER_DATA=ON -DCMAKE_BUILD_TYPE=Release
 source install/setup.bash
