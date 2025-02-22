@@ -1,7 +1,8 @@
 pip install setuptools==58.2.0
 sudo apt install ros-$ROS_DISTRO-kinematics-interface-kdl
-# vcs import src/controller_packages --input src/mobile_manipulator/settings.humble.repos
-sudo apt install ros-humble-openni2-* -y
+sudo apt install 
+# Before colcon build, install the following dependencies:
+sudo apt install ros-$ROS_DISTRO-robot-* ros-$ROS_DISTRO-libpointmatcher* libeigen3-dev -y
 
 # First install Mobile Manipulator packages
 cd && mkdir -p hc_ws/src && cd hc_ws
@@ -40,8 +41,6 @@ echo "export RCUTILS_COLORIZED_OUTPUT=1" >> ~/.bashrc
 export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 source ~/.bashrc
 
-# Before colcon build, install the following dependencies:
-sudo apt install ros-humble-grid-map* ros-humble-libpointmatcher* -y
 
 # Now build the workspace
 NUM_THREADS=$(lscpu | grep '^CPU(s):' | awk '{print $2}')
