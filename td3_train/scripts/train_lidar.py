@@ -58,7 +58,7 @@ class IsaacEnv(Node):
         self.publisher_cylinder_coords = self.create_publisher(Float32MultiArray, '/cylinder_coords', self.qos)
         
         # About Cmd Vel
-        self.cmd_vel_timer = self.create_timer(0.05, self.timer_cb)
+        self.cmd_vel_timer = self.create_timer(0.01, self.timer_cb)
         self.current_cmd_vel = Twist()
     
         # About Lidar Data
@@ -88,7 +88,7 @@ class IsaacEnv(Node):
         self.max_vel = 1.0
         self.vel_constraint = 0.5
         self.max_omega = 0.7853981633974483
-        self.COLLISION_DIST = 0.45
+        self.COLLISION_DIST = 0.42
         self.collision_bool = False
         
         self.cylinder_coords = []
