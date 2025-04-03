@@ -357,9 +357,9 @@ class IsaacEnv(Node):
         min_reward_per_region = math.exp(-0.5)
         reward_per_region_amplitude = 1 - min_reward_per_region
         
-        max_share, _ = divmod(self.start_to_goal_dist, sigma)
+        # max_share, _ = divmod(self.start_to_goal_dist, sigma)
         multiple_coef, remain = divmod(norm_rel_vec, sigma)
-        reward = coef * ((math.exp(-0.5 * (remain / sigma) ** 2) - min_reward_per_region) + (max_share - multiple_coef - 1) * reward_per_region_amplitude)
+        reward = coef * ((math.exp(-0.5 * (remain / sigma) ** 2) - min_reward_per_region) + (self.size - multiple_coef - 1) * reward_per_region_amplitude)
         
         if (self.collision_bool == True):
             self.get_logger().info(f"CLASH. DONE.")
