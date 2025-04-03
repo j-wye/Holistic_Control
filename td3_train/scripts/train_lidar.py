@@ -352,8 +352,6 @@ class IsaacEnv(Node):
         rel_vec = [self.goal[0] - self.pose.x, self.goal[1] - self.pose.y]
         norm_rel_vec = math.sqrt(rel_vec[0]**2 + rel_vec[1]**2)
         
-        # bias_dist = self.start_to_goal_dist - norm_rel_vec
-        
         coef = 500
         
         min_reward_per_region = math.exp(-0.5)
@@ -361,7 +359,7 @@ class IsaacEnv(Node):
         
         max_share, _ = divmod(self.start_to_goal_dist, sigma)
         multiple_coef, remain = divmod(norm_rel_vec, sigma)
-        reward = coef * ((math.exp(-0.5 * (remain / sigma) ** 2) - min_reward_per_region) + (max_share - multiple_coef - 2) * reward_per_region_amplitude)
+        reward = coef * ((math.exp(-0.5 * (remain / sigma) ** 2) - min_reward_per_region) + (max_share - multiple_coef - 1) * reward_per_region_amplitude)
         
         if (self.collision_bool == True):
             self.get_logger().info(f"CLASH. DONE.")
@@ -375,7 +373,7 @@ class IsaacEnv(Node):
             self.get_logger().info(f"GOAL. DONE.")
             self.done = True
             reward = 100000
-        self.get_logger().info(f"Reward: {reward:.2f}, multiple_coef: {multiple_coef}, remain : {remain:.2f}, norm_rel_vec: {norm_rel_vec:.2f}, distance_to_the_goal: {self.start_to_goal_dist:.2f}, ABS : {self.start_to_goal_dist - norm_rel_vec:.2f}")
+        self.get_logger().info(f"Reward: {reward:.2f}, multiple_coef: {multiple_coef}, remain : {remain:.2f}, norm_rel_vec: {norm_rel_vec:.2f}, ABS : {self.start_to_goal_dist - norm_rel_vec:.2f}")
         return reward, self.done
         
 if __name__ == '__main__':
