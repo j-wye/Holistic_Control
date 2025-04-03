@@ -223,17 +223,15 @@ class IsaacEnv(Node):
         
         cv2.circle(canvas, (center_x, center_y), 5, (0, 0, 255), -1)
         
-        for i in range(0, len(voxel_data) - 3, 3):
+        num_points = len(voxel_data) // 3
+        for i in range(num_points):
             x = voxel_data[i]
             y = voxel_data[i+1]
-            if abs(x) > 9.0 and abs(y) > 9.0:
-                continue
         
             px = int(center_x - y * scale)
             py = int(center_y - x * scale)
         
-            if 0 <= px < canvas_size and 0 <= py < canvas_size:
-                cv2.circle(canvas, (px, py), 2, (255, 0, 0), -1)
+            cv2.circle(canvas, (px, py), 2, (255, 0, 0), -1)
 
         cv2.imshow("Filtered Lidar Debug", canvas)
         cv2.waitKey(1)
